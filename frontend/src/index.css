@@ -1,3 +1,7 @@
+.root {
+  width: 100%;
+}
+
 body,
 html {
   margin: 0;
@@ -24,8 +28,12 @@ html {
   padding: 0;
   box-sizing: border-box;
   word-break: keep-all;
+  font-family: "Poor Story";
+  font-weight: 400;
 }
 
 button {
   cursor: pointer;
 }
+
+@import url("https://fonts.googleapis.com/css2?family=Amaranth:ital,wght@0,400;0,700;1,400;1,700&family=Jua&family=Poor+Story&display=swap");

@@ -4,16 +4,17 @@ import "./App.css";
 import Start from "@/pages/Start";
 import Login from "@/pages/Login";
 import Search from "@/pages/Search";
+import Error from "@/pages/Error";
 
 function App() {
   return (
     <div className="app">
-      <Router>
+      <Router basename="/event">
         <Routes>
           <Route path="/" element={<Start />} />
           <Route path="/login" element={<Login />} />
           <Route path="/search" element={<Search />} />
-          {/* <Route path="*" element={<Error />} /> */}
+          <Route path="*" element={<Error />} />
         </Routes>
       </Router>
     </div>

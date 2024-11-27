@@ -1,5 +1,6 @@
 import datetime
 import json
+import random
 import secrets
 
 from dotenv import load_dotenv
@@ -12,6 +13,16 @@ from flask_jwt_extended import (
 )
 from flask_migrate import Migrate
 from flask_restx import Api, Resource
+from sqlalchemy import (
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    MetaData,
+    String,
+    Table,
+    Text,
+)
 from werkzeug.security import check_password_hash
 
 from db_setup import db
@@ -33,6 +44,68 @@ migrate = Migrate(app, db)
 
 
 api = Api(app, doc="/swagger")  # Flask 객체에 Api 객체 등록
+
+
+def create_message_table(user_id):
+    """유저별 메시지 테이블 동적 생성 함수."""
+    table_name = f"messages_user_{user_id}"
+
+    # 테이블이 이미 존재하면 그것을 return
+    if db.engine.dialect.has_table(db.engine, table_name):
+        return Table(table_name, db.metadata, autoload_with=db.engine)
+
+    # 없으면 새로 생성
+    table = Table(
+        table_name,
+        db.metadata,
+        Column("memo_id", Integer, primary_key=True, autoincrement=True),
+        Column("content", Text, nullable=False),
+        Column("writer_id", Integer, ForeignKey("users.id"), nullable=False),
+        Column("choiceType", String(50), nullable=False),
+        Column("created_at", DateTime, default=datetime.now),
+        Column("updated_at", DateTime, default=datetime.now, onupdate=datetime.now),
+    )
+    table.create(db.engine)
+    return table
+
+
+def create_message(user_id, content, writer_id, choice_type):
+    # 테이블이 이미 생성되어 있으니 해당 테이블에 메시지 삽입
+    table_name = f"user_{user_id}_messages"
+
+    # 테이블 객체를 가져온다
+    try:
+        table = Table(table_name, db.metadata, autoload_with=db.engine)
+    except Exception as e:
+        return jsonify({"error": f"테이블을 로드하는데 실패했습니다: {str(e)}"}), 500
+
+    # 동적으로 생성된 테이블에 메시지 삽입
+    try:
+        # 테이블에 데이터 삽입
+        db.session.execute(
+            table.insert().values(
+                content=content,
+                writer_id=writer_id,
+                choiceType=choice_type,
+                created_at=datetime.now(),
+                updated_at=datetime.now(),
+            )
+        )
+        db.session.commit()
+
+        return (
+            jsonify(
+                {
+                    "status": "success",
+                    "message": "메시지가 성공적으로 작성되었습니다.",
+                }
+            ),
+            201,
+        )
+    except Exception as e:
+        # 오류 발생 시 롤백
+        db.session.rollback()
+        return jsonify({"error": f"메시지 작성 중 오류가 발생했습니다: {str(e)}"}), 500
 
 
 @api.route("/register")
@@ -59,8 +132,7 @@ class Register(Resource):
                 400,
             )
 
-        existing_user = User.query.filter_by(studentID=studentID).first()
-        if existing_user:
+        if User.query.filter_by(studentID=studentID).first():
             return jsonify({"error": "이미 등록된 학번입니다."}), 400
 
         new_user = User(
@@ -73,6 +145,8 @@ class Register(Resource):
 
         try:
             db.session.add(new_user)
+            db.session.commit()
+            create_message_table(new_user.id)
             db.session.commit()
         except Exception as e:
             db.session.rollback()
@@ -87,7 +161,7 @@ class Register(Resource):
 @api.route("/register/quipuCheck")
 class Check(Resource):
     def post(self):
-        # 프론트엔드에서 전달된 JSON 데이터 읽기
+
         data = request.get_json()
         studentID = data.get("studentID")
 
@@ -111,7 +185,7 @@ class Login(Resource):
     def post(self):
         data = request.get_json()
 
-        studentID = data.get("studetnID")
+        studentID = data.get("studentID")
         password = data.get("password")
 
         if not studentID or not password:
@@ -125,7 +199,7 @@ class Login(Resource):
         if not check_password_hash(existing_user.password, password):
             return jsonify({"error": "비밀번호가 일치하지 않습니다."}), 400
 
-        access_token = create_access_token(identity=User.id)
+        access_token = create_access_token(identity=existing_user.id)
 
         return (
             jsonify(
@@ -193,6 +267,39 @@ class MyStore(Resource):
         )
 
 
+@api.route("/store/<int:userID>")
+class Store(Resource):
+    def get(self, userID):
+
+        user = User.query.filter_by(id=userID).first()
+
+        if not user:
+            return (
+                jsonify(
+                    {
+                        "status": "fail",
+                        "message": f"User with ID {userID} not found.",
+                        "data": None,
+                    }
+                ),
+                404,
+            )
+
+        return (
+            jsonify(
+                {
+                    "status": "success",
+                    "message": f"Store for userID {userID}",
+                    "data": {
+                        "username": user.username,
+                        "choiceType": user.choiceType,
+                    },
+                }
+            ),
+            200,
+        )
+
+
 # @api.route("/store/<int:userID>/select")
 # class MyStoreSelect(Resource):
 # def get(self, userID):
@@ -200,60 +307,106 @@ class MyStore(Resource):
 
 
 @api.route("/store/<int:userID>/write/<string:type>")
-class MyStoreWrite(Resource):
+class StoreWrite(Resource):
     def post(self, userID, type):
+
+        current_user_id = get_jwt_identity()
 
         data = request.get_json()
         content = data.get("content")
 
-        # 데이터베이스에서 userID에 해당하는 사용자 가져오기
-        try:
-            user = User.query.filter_by(id=userID).first()
-            if not user:
-                return {
-                    "status": "error",
-                    "message": "해당 사용자 정보를 찾을 수 없습니다.",
-                }, 404
-
-            # 작성자 ID를 User 테이블에서 가져옴
-            writer_id = user.studentID
-
-        except Exception as e:
-            return {
-                "status": "error",
-                "message": f"데이터베이스 조회 중 오류가 발생했습니다: {str(e)}",
-            }, 500
-
-        # 내용 확인
         if not content:
-            return {
-                "status": "error",
-                "message": "내용을 입력해주세요.",
-            }, 400
+            return jsonify({"error": "내용을 입력하세요."}), 400
 
-        # 성공 응답
+        # 유저별 메시지 테이블에 데이터 삽입
+        try:
+            user = User.query.get(userID)
+            if not user:
+                return jsonify({"error": "유저를 찾을 수 없습니다."}), 404
+
+            # 유저별 메세지 테이블 유무 확인
+            create_message_table(userID)
+
+            # 동적으로 생성된 테이블에 메시지 추가
+            result = create_message(userID, content, current_user_id, type)
+            if result[1] != 201:
+                return result  # 오류 메시지 반환
+
+            # 새로운 메시지 ID 가져오기
+            new_message_id = result[0].get("status")
+        except Exception as e:
+            db.session.rollback()
+            return (
+                jsonify({"error": f"메시지 작성 중 오류가 발생했습니다: {str(e)}"}),
+                500,
+            )
+
         return {
-            "message": f"Write {type} for userID {writer_id}",
-            "writer_id": writer_id,
-        }, 200
+            "status": "success",
+            "message": f"{type} 쪽지가 성공적으로 작성되었습니다.",
+            "data": {
+                "memo_id": new_message_id,
+                "writer_id": current_user_id,
+                "content": content,
+                "choiceType": type,
+            },
+        }, 201
 
 
 @api.route("/myStore/<int:userID>/read/<string:postID>")
 class MyStoreRead(Resource):
     def get(self, userID, postID):
-        return {"message": f"Read post {postID} for userID {userID}"}
+
+        message = Message.query.filter_by(id=postID, user_id=userID).first()
+
+        # 쪽지가 존재하지 않는 경우
+        if not message:
+            return (
+                jsonify({"status": "error", "message": "쪽지를 찾을 수 없습니다."}),
+                404,
+            )
+
+        return (
+            jsonify(
+                {
+                    "status": "success",
+                    "data": {
+                        "postID": message.id,
+                        "writer": message.writer,
+                        "content": message.content,
+                        "choiceType": message.choice_type,
+                    },
+                }
+            ),
+            200,
+        )
 
 
 @api.route("/allStore")
 class AllStore(Resource):
     def get(self):
-        return {"message": "All stores"}
 
+        users = User.query.all()
 
-@api.route("/hello")  # 데코레이터 이용, '/hello' 경로에 클래스 등록
-class HelloWorld(Resource):
-    def get(self):  # GET 요청시 리턴 값에 해당 하는 dict를 JSON 형태로 반환
-        return {"message": "Hello, World!"}, 200
+        store_list = [{"userid": user.id, "username": user.username} for user in users]
+
+        random_user = random.choice(users)
+
+        return (
+            jsonify(
+                {
+                    "status": "success",
+                    "data": {
+                        "store_list": store_list,
+                        "random_user": {
+                            "userid": random_user.id,
+                            "username": random_user.username,
+                        },
+                    },
+                }
+            ),
+            200,
+        )
 
 
 def save_swagger_spec():

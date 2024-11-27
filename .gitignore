@@ -5,7 +5,7 @@ __pycache__/
 
 # Virtual environment directories
 venv/
-.env/
+.env
 
 # Environment variable files
 .env.local

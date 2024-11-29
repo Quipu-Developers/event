@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from db_setup import db
 
@@ -27,6 +27,9 @@ class User(db.Model):
     def password(self, password):
         self.password_hash = generate_password_hash(password)
 
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
     def set_nickname(self):
         """
         username에서 성을 제외한 나머지 이름 + '붕'을 붙여 nickname에 저장합니다.
@@ -50,7 +53,6 @@ class Message(db.Model):
     writer_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     choiceType = db.Column(db.String(50), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
-    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
     writer = db.relationship(
         "User", backref=db.backref("messages", lazy=True)

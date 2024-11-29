@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import json
 import random
 import secrets
@@ -29,7 +29,7 @@ from werkzeug.security import check_password_hash
 from db_setup import db
 from models import Message, Quipu, User
 from flasgger import Swagger
-from sqlalchemy import inspect
+from sqlalchemy import inspect, select
 
 load_dotenv()
 
@@ -52,6 +52,7 @@ migrate = Migrate(app, db)
 
 api = Api(app, doc="/swagger")  # Flask 객체에 Api 객체 등록
 swagger = Swagger(app, template_file="./swagger.json")
+jwt = JWTManager(app)
 
 
 def create_message_table(user_id):
@@ -62,7 +63,6 @@ def create_message_table(user_id):
     connection = db.engine.connect()
     if inspect(connection).has_table(table_name):
         return Table(table_name, db.metadata, autoload_with=db.engine)
-
     # 없으면 새로 생성
     table = Table(
         table_name,
@@ -71,16 +71,22 @@ def create_message_table(user_id):
         Column("content", Text, nullable=False),
         Column("writer_id", Integer, ForeignKey("users.id"), nullable=False),
         Column("choiceType", String(50), nullable=False),
-        Column("created_at", DateTime, default=datetime.now),
-        Column("updated_at", DateTime, default=datetime.now, onupdate=datetime.now),
+        Column("created_at", DateTime, default=datetime.now()),
     )
-    table.create(db.engine)
+    try:
+        connection.execution_options(isolation_level="AUTOCOMMIT")
+        table.create(db.engine)
+    except Exception as e:
+        print(f"테이블 생성 중 오류 발생: {e}")
+    finally:
+        connection.close()
+
     return table
 
 
 def create_message(user_id, content, writer_id, choice_type):
     # 테이블이 이미 생성되어 있으니 해당 테이블에 메시지 삽입
-    table_name = f"user_{user_id}_messages"
+    table_name = f"messages_user_{user_id}"
 
     # 테이블 객체를 가져온다
     try:
@@ -96,8 +102,7 @@ def create_message(user_id, content, writer_id, choice_type):
                 content=content,
                 writer_id=writer_id,
                 choiceType=choice_type,
-                created_at=datetime.now(),
-                updated_at=datetime.now(),
+                created_at=datetime.now()
             )
         )
         db.session.commit()
@@ -139,29 +144,27 @@ class Register(Resource):
                 400,
             )
 
-        if User.query.filter_by(studentID=studentID).first():
-            return {"error": "이미 등록된 학번입니다."}, 400
+        else:
+            if User.query.filter_by(studentID=studentID).first():
+                return {"error" : "이미 존재하는 학번입니다."},400
+            new_user = User(
+                username=name,
+                studentID=studentID,
+                choiceType=choiceType,
+                topic=topic,
+            )
+            new_user.password = password
+            new_user.set_nickname()
+            try:
+                db.session.add(new_user)
+                db.session.commit()
+                create_message_table(new_user.id)
+                return {"message": "회원가입이 완료되었습니다."}, 201
 
-        new_user = User(
-            username=name,
-            studentID=studentID,
-            password=password,
-            choiceType=choiceType,
-            topic=topic,
-        )
+            except Exception as e:
+                db.session.rollback()
+                return {"error": f"회원가입 중 오류가 발생했습니다: {str(e)}"}, 500
 
-        new_user.set_nickname()
-
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-            create_message_table(new_user.id)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            return {"error": f"회원가입 중 오류가 발생했습니다: {str(e)}"}, 500
-
-        return {"message": "회원가입이 완료되었습니다."}, 201
 
     def get(self):
         return {"error": "Methods Error"}, 405
@@ -201,11 +204,10 @@ class Login(Resource):
             return {"error": "모든 필수 값을 입력해주세요."}, 400
 
         existing_user = User.query.filter_by(studentID=studentID).first()
-
         if not existing_user:
             return {"error": "가입되지 않은 회원입니다."}, 400
 
-        if not check_password_hash(existing_user.password, password):
+        if not existing_user.verify_password(password):
             return {"error": "비밀번호가 일치하지 않습니다."}, 400
 
         access_token = create_access_token(identity=existing_user.id)
@@ -233,7 +235,7 @@ class MyStore(Resource):
 
         # 현재 로그인한 사용자의 ID를 가져옴
         current_user_id = get_jwt_identity()
-
+        print(current_user_id)
         # 로그인한 사용자의 ID와 요청된 userID가 일치하는지 확인
         if current_user_id != userID:
             return (
@@ -311,21 +313,23 @@ class Store(Resource):
 
 @api.route("/store/<int:userID>/write/<string:type>")
 class StoreWrite(Resource):
+    @jwt_required()
     def post(self, userID, type):
 
         current_user_id = get_jwt_identity()
 
         data = request.get_json()
         content = data.get("content")
-
+        if userID == current_user_id:
+            return {"error" : "본인의 붕어빵에는 쪽지를 작성할 수 없습니다"},404
         if not content:
             return {"error": "내용을 입력하세요."}, 400
 
         # 유저별 메시지 테이블에 데이터 삽입
         try:
-            user = User.query.get(userID)
+            user = db.session.get(User, userID)
             if not user:
-                return {"error": "유저를 찾을 수 없습니다."}, 404
+                return {"error": "유저를 찾을 수 없습니다."}, 403
 
             # 유저별 메세지 테이블 유무 확인
             create_message_table(userID)
@@ -337,6 +341,8 @@ class StoreWrite(Resource):
 
             # 새로운 메시지 ID 가져오기
             new_message_id = result[0].get("status")
+
+            db.session.commit()
         except Exception as e:
             db.session.rollback()
             return (
@@ -356,53 +362,77 @@ class StoreWrite(Resource):
         }, 201
 
 
-@api.route("/myStore/<int:userID>/read/<string:postID>")
+@api.route("/myStore/<int:userID>/read/<int:postID>")
 class MyStoreRead(Resource):
     def get(self, userID, postID):
+        #테이블 이름 동적 생성
+        table_name = f"messages_user_{userID}"
+        metadata = MetaData()
 
-        message = Message.query.filter_by(id=postID, user_id=userID).first()
-
-        # 쪽지가 존재하지 않는 경우
-        if not message:
+        try:
+            table = Table(table_name, metadata, autoload_with=db.engine)
+        except Exception as e:
             return (
-                {"status": "error", "message": "쪽지를 찾을 수 없습니다."},
-                404,
-            )
+                {"status": "error", "message": f"테이블 로드 실패: {str(e)}"},
+                500,
+            )        # 쪽지가 존재하지 않는 경우
 
-        return (
+        #쪽지 데이터 검색
+        try:
+            stmt = select(table).where(table.c.memo_id == postID)
+            result = db.session.execute(stmt).fetchone()
+            if not result:
+                return (
+                    {"status": "error", "message": "쪽지를 찾을 수 없습니다."},
+                    404,
+                )
+
+            # 결과 반환
+            return (
                 {
                     "status": "success",
                     "data": {
-                        "postID": message.id,
-                        "writer": message.writer,
-                        "content": message.content,
-                        "choiceType": message.choice_type,
+                        "postID": result.memo_id,
+                        "writer": result.writer_id,  # 테이블에 따라 수정 필요
+                        "content": result.content,
+                        "choiceType": result.choiceType,  # 테이블에 따라 수정 필요
                     },
-                }
-            ,
-            200,
-        )
+                },
+                200,
+            )
+        except Exception as e:
+            return (
+                {"status": "error", "message": f"데이터 검색 중 오류: {str(e)}"},
+                500,
+            )
+
+
 
 
 @api.route("/allStore")
 class AllStore(Resource):
+    @jwt_required()
     def get(self):
 
         users = User.query.all()
+        # 사용자가 없을 경우 처리
+        if not users:
+            return (
+                {"status": "error", "message": "사용자가 없습니다."},
+                404,
+            )
 
         store_list = [{"userid": user.id, "username": user.username} for user in users]
-
-        random_user = random.choice(users)
-
+        random_user = random.sample(users,2)
         return (
                 {
                     "status": "success",
                     "data": {
                         "store_list": store_list,
-                        "random_user": {
-                            "userid": random_user.id,
-                            "username": random_user.username,
-                        },
+                        "random_users": [
+                            {"userid": user.id, "username": user.username}
+                            for user in random_user
+                        ],
                     },
                 }
             ,

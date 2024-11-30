@@ -15,6 +15,7 @@ class User(db.Model):
     nickname = db.Column(db.String(50), nullable=False)
     choiceType = db.Column(db.String(50), nullable=False)
     topic = db.Column(db.String(255), nullable=True)
+    coin = db.Column(db.Integer, default = 0)
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -44,7 +45,7 @@ class User(db.Model):
             # 이름 전체 + '붕'
             self.nickname = self.username + "붕"
 
-
+'''
 class Message(db.Model):
     __tablename__ = "messages"
 
@@ -60,7 +61,7 @@ class Message(db.Model):
 
     def __repr__(self):
         return f"<Message {self.memo_id}>"
-
+'''
 
 # Quipu 회원 데이터베이스
 class Quipu(db.Model):

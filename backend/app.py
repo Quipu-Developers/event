@@ -27,19 +27,13 @@ from sqlalchemy import (
 from werkzeug.security import check_password_hash
 
 from db_setup import db
-from models import Message, Quipu, User
+from models import Quipu, User
 from flasgger import Swagger
 from sqlalchemy import inspect, select
 
 load_dotenv()
 
 app = Flask(__name__)
-# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:1212@localhost/mywork"
-# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# app.config["SERVER_NAME"] = "localhost:8080"
-# app.config["SECRET_KEY"] = "your-secret-key"  # JWT 토큰 생성에 필요한 비밀 키
-
-# SECRET_KEY = "my_secret_key"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -60,9 +54,8 @@ def create_message_table(user_id):
     table_name = f"messages_user_{user_id}"
 
     # 테이블이 이미 존재하면 그것을 return
-    connection = db.engine.connect()
-    if inspect(connection).has_table(table_name):
-        return Table(table_name, db.metadata, autoload_with=db.engine)
+    if inspect(db.engine).has_table(table_name):
+        return Table(table_name, db.metadata, autoload_with=db.engine, extend_existing=True)
     # 없으면 새로 생성
     table = Table(
         table_name,
@@ -74,13 +67,13 @@ def create_message_table(user_id):
         Column("created_at", DateTime, default=datetime.now()),
     )
     try:
-        connection.execution_options(isolation_level="AUTOCOMMIT")
-        table.create(db.engine)
+        with db.engine.connect() as connection:
+            if connection.in_transaction():
+                connection.rollback()
+            connection.execution_options(isolation_level="AUTOCOMMIT")
+            db.metadata.create_all(bind=connection,tables = [table])
     except Exception as e:
-        print(f"테이블 생성 중 오류 발생: {e}")
-    finally:
-        connection.close()
-
+        return ({"error" : f"테이블 생성 중 오류가 발생했습니다: {str(e)}"}),500
     return table
 
 
@@ -166,32 +159,6 @@ class Register(Resource):
                 return {"error": f"회원가입 중 오류가 발생했습니다: {str(e)}"}, 500
 
 
-    def get(self):
-        return {"error": "Methods Error"}, 405
-
-
-@api.route("/register/quipuCheck")
-class Check(Resource):
-    def post(self):
-
-        data = request.get_json()
-        studentID = data.get("studentID")
-
-        if not studentID:
-            return {"error": "학번을 입력하세요."}, 400
-
-        # 학번이 데이터베이스에 있는지 확인
-        student = Quipu.query.filter_by(studentID=studentID).first()
-
-        if student:
-            return {"exists": True, "message": "학번이 존재합니다."}, 200
-        else:
-            return (
-                {"exists": False, "message": "학번이 존재하지 않습니다."},
-                404,
-            )
-
-
 @api.route("/login")
 class Login(Resource):
     def post(self):
@@ -224,62 +191,15 @@ class Login(Resource):
             200,
         )
 
-    def get(self):
-        return ({"error": "Methods Error"}, 405)
-
-
-@api.route("/myStore/<int:userID>")
-class MyStore(Resource):
-    @jwt_required()
-    def get(self, userID):
-
-        # 현재 로그인한 사용자의 ID를 가져옴
-        current_user_id = get_jwt_identity()
-        print(current_user_id)
-        # 로그인한 사용자의 ID와 요청된 userID가 일치하는지 확인
-        if current_user_id != userID:
-            return (
-                    {
-                        "status": "fail",
-                        "message": "로그인한 사용자만 본인의 정보를 확인할 수 있습니다.",
-                    }
-                ,
-                403,
-            )
-
-        user = User.query.filter_by(id=userID).first()
-
-        if not user:
-            return (
-                    {
-                        "status": "fail",
-                        "message": f"User with ID {userID} not found.",
-                        "data": None,
-                    }
-                ,
-                404,
-            )
-
-        return (
-                {
-                    "status": "success",
-                    "message": f"MyStore for userID {userID}",
-                    "data": {
-                        "username": user.username,
-                        "choiceType": user.choiceType,
-                    },
-                }
-            ,
-            200,
-        )
 
 
 @api.route("/store/<int:userID>")
 class Store(Resource):
+    @jwt_required()
     def get(self, userID):
-
+        current_user_id = get_jwt_identity()
         user = User.query.filter_by(id=userID).first()
-
+        loginUser = User.query.filter_by(id=current_user_id).first()
         if not user:
             return (
                     {
@@ -290,14 +210,15 @@ class Store(Resource):
                 ,
                 404,
             )
-
         return (
                 {
                     "status": "success",
                     "message": f"Store for userID {userID}",
                     "data": {
+                        "loginUser" : loginUser.username, 
                         "username": user.username,
                         "choiceType": user.choiceType,
+                        "coin" : user.coin
                     },
                 }
             ,
@@ -362,9 +283,19 @@ class StoreWrite(Resource):
         }, 201
 
 
-@api.route("/myStore/<int:userID>/read/<int:postID>")
+@api.route("/store/<int:userID>/read/<int:postID>")
 class MyStoreRead(Resource):
+    @jwt_required()
     def get(self, userID, postID):
+        #현재 로그인한 사용자의 ID 가져옴
+        current_user_id = get_jwt_identity()
+        if current_user_id != userID:
+            return (
+                {
+                    "status" : "fail",
+                    "message" : "로그인한 사용자만 본인의 정보를 확인할 수 있습니다.",
+                }, 403,
+            )
         #테이블 이름 동적 생성
         table_name = f"messages_user_{userID}"
         metadata = MetaData()
@@ -409,7 +340,7 @@ class MyStoreRead(Resource):
 
 
 
-@api.route("/allStore")
+@api.route("/all-store")
 class AllStore(Resource):
     @jwt_required()
     def get(self):
@@ -421,21 +352,18 @@ class AllStore(Resource):
                 {"status": "error", "message": "사용자가 없습니다."},
                 404,
             )
-
-        store_list = [{"userid": user.id, "username": user.username} for user in users]
-        random_user = random.sample(users,2)
+        # 모델 객체를 딕셔너리로 변환
+        store_list = [
+            {"userID" : user.id, "username" : user.username}
+            for user in users
+        ]
         return (
                 {
                     "status": "success",
                     "data": {
                         "store_list": store_list,
-                        "random_users": [
-                            {"userid": user.id, "username": user.username}
-                            for user in random_user
-                        ],
                     },
-                }
-            ,
+                },
             200,
         )
 

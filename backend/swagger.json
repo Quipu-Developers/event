@@ -156,39 +156,6 @@
         }
       }
     },
-    "/register/quipuCheck": {
-      "post": {
-        "summary": "quipu에서 학번 확인",
-        "description": "quipu_students 테이블에서 학번이 존재하는지 확인합니다.",
-        "tags": [
-          "사용자"
-        ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "studentID": {
-                  "type": "string",
-                  "example": "20241234"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "학번이 존재합니다."
-          },
-          "404": {
-            "description": "학번이 존재하지 않습니다."
-          }
-        }
-      }
-    },
     "/login": {
       "post": {
         "summary": "사용자 로그인",
@@ -318,7 +285,12 @@
           "403": {
             "description": "로그인 필요합니다"
           }
-        }
+        },
+        "security": [
+          {
+            "jwt_token": []
+          }
+        ]
       }
     },
     "/store/{userID}/write/{type}": {

@@ -7,3 +7,4 @@ Werkzeug
 SQLAlchemy
 pymysql
 flasgger
+cryptography

@@ -15,6 +15,7 @@ class User(db.Model):
     nickname = db.Column(db.String(50), nullable=False)
     choiceType = db.Column(db.String(50), nullable=False)
     topic = db.Column(db.String(255), nullable=True)
+    coin = db.Column(db.Integer, default = 0)
 
     def __repr__(self):
         return f"<User {self.username}>"
@@ -50,9 +51,10 @@ class Message(db.Model):
 
     memo_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.Text, nullable=False)
-    writer_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    sender = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     choiceType = db.Column(db.String(50), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
+    receiver = db.Column(db.String(50), nullable=False)
 
     writer = db.relationship(
         "User", backref=db.backref("messages", lazy=True)
@@ -60,7 +62,6 @@ class Message(db.Model):
 
     def __repr__(self):
         return f"<Message {self.memo_id}>"
-
 
 # Quipu 회원 데이터베이스
 class Quipu(db.Model):

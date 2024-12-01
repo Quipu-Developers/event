@@ -5,6 +5,7 @@ import Start from "@/pages/Start";
 import Login from "@/pages/Login";
 import Search from "@/pages/Search";
 import Error from "@/pages/Error";
+import Register from "@/pages/Register";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Start />} />
           <Route path="/login" element={<Login />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/register" element={<Register />} />
           <Route path="*" element={<Error />} />
         </Routes>
       </Router>

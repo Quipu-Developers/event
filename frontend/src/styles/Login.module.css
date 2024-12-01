@@ -1,0 +1,74 @@
+/* 가게 조회 */
+.loginContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff3d1;
+    gap: 1rem; /* 요소 간 간격 추가 */
+}
+
+/* 로그인 제목 */
+.loginTitle {
+    font-weight: 400;
+    font-size: 3rem;
+    line-height: 50px;
+    color: #6d4322;
+}
+
+.mapSnow {
+    width: 43px;
+    height: 43px;
+    top: 53px;
+    left: 174px;
+    padding: 0.86px 3.44px 0.86px 3.44px;
+    margin-top: 50px;
+}
+
+/* 입력 필드 박스 */
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* 필드 간 간격 */
+    width: 100%;
+}
+
+.inputBox {
+    width: 277px;
+    height: 48px;
+    top: 374px;
+    background: #ffffff;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px; /* 내부 여백 */
+}
+
+.inputLabel {
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 26px;
+    color: #6d4322;
+}
+
+/* 버튼 스타일 */
+.button {
+    width: 226px;
+    height: 56px;
+    background: #ffdf80;
+    border-radius: 10px;
+    font-size: 2rem;
+    color: #6d4322;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+}
+
+.loginButton {
+    margin-top: 30px;
+}
+
+.signupButton {
+    /* 스타일이 없는 경우 추가 필요 시 여기에 작성 */
+}

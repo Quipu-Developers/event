@@ -1,8 +1,8 @@
 import "@/styles/Search.css"
-import white_snowflower from "@/assets/흰색눈꽃.png";
-import random from "@/assets/랜덤추천.png"
+
 import { TbSnowflake } from "react-icons/tb";
 import { TbReload } from "react-icons/tb";
+import { FaSearch } from "react-icons/fa";
 
 export default function Search() {
     return (
@@ -11,14 +11,22 @@ export default function Search() {
             <h1>친구 가게 조회하기</h1>
             <div className="random-recommend">
                 <h4>랜덤 추천 </h4>
-                <TbReload color="6D4322" />
-
+                <TbReload color="6D4322"/>
             </div>
             <div className="button-setup">
                 <button> 붕어님의 붕어빵 가게</button>
                 <button> 붕어님의 붕어빵 가게</button>
                 <button> 붕어님의 붕어빵 가게</button>
                 <button> 붕어님의 붕어빵 가게</button>
+            </div>
+            <div className="input-container">
+                <label htmlFor="text-input"></label>
+                <input type="text" id="text-input" placeholder="가게 검색"/>
+                <FaSearch style={{
+                    color: "#6D4322",          // 아이콘 색상
+                    backgroundColor: "#FFF1BB", // 네모 박스 배경색
+                    padding: "1.8vh",            // 네모 박스 내부 여백
+                }} />
             </div>
         </div>
     );

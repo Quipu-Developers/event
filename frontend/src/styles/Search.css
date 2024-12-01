@@ -1,0 +1,68 @@
+.search-container {
+    background-color: #FFDA80; /* 요소의 배경색 */
+    width: 100%;               /* 너비를 부모 요소의 100%로 설정 */
+    height: 100%;              /* 높이를 부모 요소의 100%로 설정 */
+    display: flex;             /* Flexbox 컨테이너로 설정 */
+    flex-direction: column;    /* 자식 요소를 수직 방향으로 정렬 */
+    justify-content: space-around; /* 자식 요소 사이와 양 끝에 간격 추가 */
+    align-items: center;       /* 자식 요소를 가로축 가운데로 정렬 */
+
+
+
+    > img{
+        position: absolute;
+        margin-top: -87vh;
+
+
+    }
+
+    & h1{
+        position: absolute;
+        margin-top: -70vh;
+        font-size: 7vh;
+        text-align: center;
+    }
+
+
+}
+
+.snow{
+    position: absolute;
+    color: white;
+    font-size: 7vh;
+    margin-top: -90vh;
+}
+
+
+.random-recommend {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: -57vh;
+    font-size: 4vh;
+}
+
+
+
+.button-setup {
+    display: flex; /* Flexbox 활성화 */
+    flex-direction: column; /* 세로 방향 정렬 */
+    align-items: center; /* 가로 중앙 정렬 */
+    position: absolute;
+    margin-top: 2vh;
+
+    & button {
+        position: relative;
+        color: #6d4322;
+        width: 60vh;
+        height: 11vh;
+        border-radius: 10px;
+        border: 5px solid #FFF1BB;
+        font-size: 4vh;
+        background-color: #FFFBED;
+        margin: 1vh;
+    }
+}
+
+

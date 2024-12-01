@@ -1,3 +1,17 @@
+export interface Store {
+    type: string;
+    userID: number;
+    username: string;
+}
+export interface ApiResponse{
+    data: {
+        store_list: Store[];
+    }
+    status: string;
+}
+
+
+/*
 declare global{
     interface UserInfo {
         type: string;
@@ -11,4 +25,5 @@ declare global{
         status: string;
     }
 }
+ */
 

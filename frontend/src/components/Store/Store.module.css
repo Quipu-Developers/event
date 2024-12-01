@@ -1,0 +1,188 @@
+.storeContainer {
+  width: 80%;
+  max-width: 400px;
+  height: 60%;
+  position: relative;
+}
+
+.storeName {
+  position: absolute;
+  width: 100%;
+  top: 5%;
+  left: 0;
+  height: 20%;
+
+  & h2 {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 200;
+    font-size: 3.4rem;
+    -webkit-text-stroke: 4px white;
+  }
+
+  & h3 {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 201;
+    font-size: 3.4rem;
+  }
+}
+
+.storeRoofTop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 15%;
+  background-color: #ff6e3e;
+  clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+}
+
+.storeRoofBottom {
+  position: absolute;
+  top: 15%;
+  left: 0;
+  width: 100%;
+  height: 20%;
+  display: flex;
+  z-index: 100;
+
+  & div {
+    width: 100%;
+    border-radius: 0 0 40% 40%;
+  }
+
+  & div:nth-child(odd) {
+    background-color: #ff6e3e;
+  }
+
+  & div:nth-child(even) {
+    background-color: #ffc944;
+  }
+}
+
+.storeFront {
+  position: absolute;
+  top: 15%;
+  left: 0;
+  width: 100%;
+  height: 80%;
+  border-left: 21px solid #bebebe;
+  border-right: 21px solid #bebebe;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 50;
+}
+
+.fishBreadContainer {
+  width: calc(100% + 15px);
+  height: 30%;
+  background-color: #bebebe;
+  clip-path: polygon(11% 0%, 89% 0%, 100% 100%, 0% 100%);
+  border-top: 4px solid #898989;
+  position: absolute;
+  bottom: 23%;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.fishBreadContainer::before,
+.fishBreadContainer::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 4px;
+  background-color: #898989;
+  z-index: 1000;
+}
+
+.fishBreadContainer::before {
+  top: 30%;
+}
+
+.fishBreadContainer::after {
+  bottom: 30%;
+}
+
+.fishBreadBox {
+  position: absolute;
+  z-index: 1000;
+  bottom: 23%;
+  left: 0;
+  padding: 0 11%;
+  width: 100%;
+  height: 30%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  justify-items: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.fishBreadImage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+
+  & img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: auto;
+    transform: translate(-50%, -50%) rotate(15deg);
+
+    @media (max-width: 410px) {
+      width: 120%;
+    }
+  }
+}
+
+.fishBreadCost {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 23%;
+  background-color: #898989;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5%;
+  padding: 0 10px;
+  z-index: 1000;
+
+  & div {
+    background-color: white;
+    padding: 5px 20px;
+  }
+
+  & p {
+    color: #6d4322;
+    font-size: 1.1rem;
+  }
+}
+
+.storeBack {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 80%;
+  height: 80%;
+  border-left: 16px solid #d9d9d9;
+  border-right: 15px solid #d9d9d9;
+}

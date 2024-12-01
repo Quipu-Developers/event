@@ -6,6 +6,7 @@ import Login from "@/pages/Login";
 import Search from "@/pages/Search";
 import Error from "@/pages/Error";
 import Register from "@/pages/Register";
+import Test from "@/pages/Test";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Router basename="/event">
         <Routes>
           <Route path="/" element={<Start />} />
+          <Route path="/test" element={<Test />} />
           <Route path="/login" element={<Login />} />
           <Route path="/search" element={<Search />} />
           <Route path="/register" element={<Register />} />

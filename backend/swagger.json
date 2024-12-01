@@ -38,7 +38,7 @@
                 },
                 "choiceType": {
                   "type": "string",
-                  "example": "슈붕"
+                  "example": "fish1"
                 },
                 "topic": {
                   "type": "string",
@@ -106,7 +106,7 @@
                 },
                 "choiceType": {
                   "type": "string",
-                  "example": "슈붕"
+                  "example": "fish2"
                 },
                 "token": {
                   "type": "string",
@@ -174,7 +174,7 @@
                     },
                     "choiceType": {
                       "type": "string",
-                      "example": "슈붕"
+                      "example": "fish2"
                     },
                     "coin": {
                       "type": "integer",
@@ -183,19 +183,19 @@
                     "memoChoiceCount": {
                       "type": "object",
                       "properties": {
-                        "팥붕": {
+                        "fish1": {
                           "type": "integer",
                           "example": 3
                         },
-                        "슈붕": {
+                        "fish2": {
                           "type": "integer",
                           "example": 2
                         },
-                        "민초붕": {
+                        "fish3": {
                           "type": "integer",
                           "example": 1
                         },
-                        "고구마붕": {
+                        "fish4": {
                           "type": "integer",
                           "example": 0
                         }
@@ -239,7 +239,7 @@
             "in": "path",
             "required": true,
             "type": "string",
-            "example": "팥붕"
+            "example": "fish1"
           },
           {
             "in": "header",
@@ -275,6 +275,88 @@
           },
           "500": {
             "description": "서버 오류"
+          }
+        }
+      }
+    },
+    "/store/{userID}/read/{type}": {
+      "get": {
+        "summary": "쪽지 읽기",
+        "description": "선택한 붕어빵 종류에 해당하는 쪽지중 오래된 쪽지 열람, 보낸 사람에게 500코인 지급",
+        "tags": ["스토어"],
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "유저 아이디"
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "붕어빵 종류"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string",
+            "description": "JWT 토큰 (형식: Bearer <token>)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공적으로 메시지 읽음, 보낸 사람에게 500코인 지급",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "쪽지를 읽었습니다. {sender}님에게 500코인이 지급되었습니다."
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "memo_id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "sender": {
+                      "type": "integer",
+                      "example": 123
+                    },
+                    "receiver": {
+                      "type": "integer",
+                      "example": 456
+                    },
+                    "content": {
+                      "type": "string",
+                      "example": "쪽지 내용"
+                    },
+                    "choiceType": {
+                      "type": "string",
+                      "example": "fish1"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "권한이 없습니다. 다른 사용자의 메시지를 읽을 수 없습니다."
+          },
+          "404": {
+            "description": "쪽지를 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "보낸 사람 정보를 찾을 수 없습니다."
           }
         }
       }
@@ -321,7 +403,7 @@
                           },
                           "type": {
                             "type": "string",
-                            "example": "슈붕"
+                            "example": "fish2"
                           }
                         }
                       }

@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
   app:
     build:
@@ -7,39 +8,38 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - LANG=ko_KR.UTF-8
-      - LANGUAGE=ko_KR.UTF-8
-      - LC_ALL=ko_KR.UTF-8
-      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:password@db:3306/mywork
-      - SERVER_NAME=localhost:5000
-      - SECRET_KEY=my_secret_key
+      LANG: ko_KR.UTF-8
+      LANGUAGE: ko_KR.UTF-8
+      LC_ALL: ko_KR.UTF-8
+      SQLALCHEMY_DATABASE_URI: mysql+pymysql://root:secret@quipu_mysql_db:3306/mywork?charset=utf8mb4
+      SERVER_NAME: localhost:5000
+      SECRET_KEY: my_secret_key
     depends_on:
-      - db
+      mysql:
+        condition: service_healthy
     volumes:
       - .:/app
     container_name: quipu_event_app
 
-  db:
+  mysql:
     image: mysql:8.0
-    restart: always
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: mywork
-      MYSQL_INITDB_SKIP_TZINFO: 1
-      TZ: Asia/Seoul
-      CHARACTER_SET_SERVER: utf8mb4
-      COLLATION_SERVER: utf8mb4_unicode_ci
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
     ports:
       - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    container_name: quipu_event_db
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-psecret"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
+    container_name: quipu_mysql_db
 
 volumes:
-  db_data:
+  mysql-data:

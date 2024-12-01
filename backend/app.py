@@ -36,6 +36,7 @@ load_dotenv()
 app = Flask(__name__)
 
 app.config["JSON_AS_ASCII"] = False
+app.config["JSON_SORT_KEYS"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
@@ -115,7 +116,7 @@ class Login(Resource):
         if not existing_user.verify_password(password):
             return custom_response({"error": "비밀번호가 일치하지 않습니다."}, 400)
 
-        access_token = create_access_token(identity=existing_user.id)
+        access_token = create_access_token(identity=str(existing_user.id))
 
         result = {
             "status": "success",
@@ -138,7 +139,7 @@ class Store(Resource):
             return custom_response({"error": f"User with ID {userID} not found."}, 404)
 
         messages = Message.query.filter_by(receiver=userID).all()
-        choiceCounts = {"A" : 0, "B" : 0, "C" : 0, "D" : 0}
+        choiceCounts = {"팥붕" : 0, "슈붕" : 0, "민초붕" : 0, "고구마붕" : 0}
         for message in messages:
             choice = message.choiceType
             if choice in choiceCounts:

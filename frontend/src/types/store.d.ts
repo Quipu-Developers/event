@@ -1,9 +1,10 @@
 declare interface StoreProps {
   username: string;
   memoChoiceCount: {
-    팥붕: number;
-    슈붕: number;
-    민초붕: number;
-    고구마붕: number;
+    fish1: number;
+    fish2: number;
+    fish3: number;
+    fish4: number;
   };
+  setSelectedFish: React.Dispatch<React.SetStateAction<T>>;
 }

@@ -4,12 +4,16 @@ import fish2 from "@/assets/슈붕.png";
 import fish3 from "@/assets/민초붕.png";
 import fish4 from "@/assets/고구마붕.png";
 
-export default function Store({ username, memoChoiceCount }: StoreProps) {
+export default function Store({
+  username,
+  memoChoiceCount,
+  setSelectedFish,
+}: StoreProps) {
   const fishBreadImages: { [key in keyof typeof memoChoiceCount]: string } = {
-    팥붕: fish1,
-    슈붕: fish2,
-    민초붕: fish3,
-    고구마붕: fish4,
+    fish1: fish1,
+    fish2: fish2,
+    fish3: fish3,
+    fish4: fish4,
   };
 
   const fishList: Array<keyof typeof memoChoiceCount | null> = [];
@@ -24,6 +28,10 @@ export default function Store({ username, memoChoiceCount }: StoreProps) {
   }
 
   const shuffledFishList = fishList.sort(() => Math.random() - 0.5);
+
+  const handleFish = (type: string) => {
+    setSelectedFish(type);
+  };
 
   return (
     <div className={styles.storeContainer}>
@@ -51,6 +59,7 @@ export default function Store({ username, memoChoiceCount }: StoreProps) {
                   src={fishBreadImages[type]}
                   alt={`${type}-bread-${index}`}
                   className={styles.fishBreadImage}
+                  onClick={() => handleFish(type)}
                 />
               )}
             </div>

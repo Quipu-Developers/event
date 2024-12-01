@@ -153,10 +153,15 @@
     width: 100%;
     height: auto;
     transform: translate(-50%, -50%) rotate(15deg);
+    cursor: pointer;
 
     @media (max-width: 410px) {
       width: 120%;
     }
+  }
+
+  & img:hover {
+    transform: translate(-50%, -50%);
   }
 }
 

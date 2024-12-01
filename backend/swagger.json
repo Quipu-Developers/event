@@ -20,18 +20,22 @@
     "/allStore": {
       "get": {
         "summary": "모든 스토어 조회",
-        "description": "모든 사용자 목록과 무작위로 선택된 사용자의 정보를 가져옵니다.",
+        "description": "모든 사용자 목록과 정보를 가져옵니다.",
         "tags": [
           "스토어"
         ],
-        "security": [
+        "parameters": [
           {
-            "jwt_token": []
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string",
+            "description": "JWT token for authentication. Format: Bearer <token>"
           }
         ],
         "responses": {
           "200": {
-            "description": "모든 사용자와 무작위 사용자 정보.",
+            "description": "모든 사용자 목록 및 정보 조회",
             "schema": {
               "type": "object",
               "properties": {
@@ -47,26 +51,17 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "userid": {
+                          "userID": {
                             "type": "integer",
                             "example": 1
                           },
                           "username": {
                             "type": "string",
                             "example": "Alice"
-                          }
-                        }
-                      }
-                    },
-                    "random_users": {
-                      "type": "array",
-                      "items": {
-                        "properties": {
-                          "userid": {
-                            "type": "integer"
                           },
-                          "username": {
-                            "type": "string"
+                          "type": {
+                            "type": "string",
+                            "example": "A"
                           }
                         }
                       }
@@ -81,16 +76,19 @@
             "schema": {
               "type": "object",
               "properties": {
-                "status": {
-                  "type": "string"
-                },
-                "message": {
-                  "type": "string"
+                "error": {
+                  "type": "string",
+                  "example": "사용자가 없습니다"
                 }
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
       }
     },
     "/register": {
@@ -118,7 +116,7 @@
                 },
                 "password": {
                   "type": "string",
-                  "example": "password123"
+                  "example": "1111"
                 },
                 "choiceType": {
                   "type": "string",
@@ -126,7 +124,7 @@
                 },
                 "topic": {
                   "type": "string",
-                  "example": "Sports"
+                  "example": "하고 싶은 말"
                 }
               }
             }
@@ -141,17 +139,6 @@
           },
           "500": {
             "description": "회원 가입 오류"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "사용자"
-        ],
-        "description": "지원하지 않는 요청 방식",
-        "responses": {
-          "405": {
-            "description": "메서드 에러"
           }
         }
       }
@@ -177,7 +164,7 @@
                 },
                 "password": {
                   "type": "string",
-                  "example": "password123"
+                  "example": "1111"
                 }
               },
               "required": [
@@ -217,22 +204,21 @@
             }
           },
           "400": {
-            "description": "잘못된 학번 또는 비밀번호."
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "사용자"
-        ],
-        "responses": {
-          "405": {
-            "description": "메서드 에러"
+            "description": "잘못된 학번 또는 비밀번호.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "비밀번호가 일치하지 않습니다"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/myStore/{userID}": {
+    "/store/{userID}": {
       "get": {
         "summary": "사용자 스토어 조회",
         "description": "특정 사용자의 스토어 정보를 조회합니다.",
@@ -247,6 +233,13 @@
             "type": "integer",
             "description": "사용자의 ID.",
             "example": 123
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string",
+            "description": "JWT token for authentication. Format: Bearer <token>"
           }
         ],
         "responses": {
@@ -261,7 +254,7 @@
                 },
                 "message": {
                   "type": "string",
-                  "example": "MyStore for userID 1"
+                  "example": "Store for userID 1"
                 },
                 "data": {
                   "type": "object",
@@ -273,6 +266,31 @@
                     "choiceType": {
                       "type": "string",
                       "example": "A"
+                    },
+                    "coin": {
+                      "type": "integer",
+                      "example": 500
+                    },
+                    "memoChoiceCount": {
+                      "type": "object",
+                      "properties": {
+                        "A": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "B": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "C": {
+                          "type": "integer",
+                          "example": 5
+                        },
+                        "D": {
+                          "type": "integer",
+                          "example": 5
+                        }
+                      }
                     }
                   }
                 }
@@ -280,10 +298,16 @@
             }
           },
           "404": {
-            "description": "사용자를 찾을 수 없습니다."
-          },
-          "403": {
-            "description": "로그인 필요합니다"
+            "description": "사용자를 찾을 수 없습니다./ 선택지 오류",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "User with ID 1 not found / unknown choice"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -314,8 +338,15 @@
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "메시지 유형.",
-            "example": "public"
+            "description": "메시지 유형.(e.g., A, B, C, D)",
+            "example": "A"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string",
+            "description": "JWT token for authentication. Format: Bearer <token>"
           },
           {
             "name": "body",
@@ -356,9 +387,13 @@
                       "type": "integer",
                       "example": 1
                     },
-                    "writer_id": {
+                    "sender": {
                       "type": "integer",
                       "example": 123
+                    },
+                    "receiver": {
+                      "type": "integer",
+                      "example": 789
                     },
                     "content": {
                       "type": "string",
@@ -366,7 +401,7 @@
                     },
                     "choiceType": {
                       "type": "string",
-                      "example": "student"
+                      "example": "A"
                     }
                   }
                 }
@@ -374,35 +409,84 @@
             }
           },
           "400": {
-            "description": "내용을 입력하세요"
+            "description": "내용을 입력하세요",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "내용을 입력하세요"
+                }
+              }
+            }
           },
           "403": {
-            "description": "자기 붕어빵에는 쪽지 작성 불가합니다"
+            "description": "User not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "유저를 찾을 수 없습니다."
+                }
+              }
+            }
           },
           "404": {
-            "description": "사용자를 찾을 수 없습니다."
+            "description": "Self-message or invalid action",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "본인의 붕어빵에는 쪽지를 작성할 수 없습니다"
+                }
+              }
+            }
           },
           "500": {
-            "description": "서버 에러"
+            "description": "Server error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "메시지 작성 중 오류가 발생했습니다"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
       }
     },
-    "/store/{userID}": {
+    "/store/{userID}/read/{postID}": {
       "get": {
-        "summary": "다른 사람 가게 조회",
-        "description": "다른 사람의 붕어빵 가게",
+        "summary": "메시지 열람",
+        "description": "본인에게 작성된 쪽지 열람",
         "parameters": [
           {
-            "name": "userID",
             "in": "path",
-            "reuired": true,
+            "name": "userID",
+            "required": true,
             "type": "integer",
-            "description": "userID"
+            "description": "쪽지 읽을 유저의 아이디"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string",
+            "description": "JWT token for authentication. Format: Bearer <token>"
           }
         ],
         "responses": {
           "200": {
+            "description": "메시지 읽기 성공",
             "schema": {
               "type": "object",
               "properties": {
@@ -411,35 +495,79 @@
                   "example": "success"
                 },
                 "message": {
-                  "type": "string"
+                  "type": "string",
+                  "example": "쪽지를 읽었습니다. 123 님에게 500 코인이 지급되었습니다"
                 },
-                "404": {
-                  "description": "User not found.",
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "status": {
-                        "type": "string",
-                        "example": "fail"
-                      },
-                      "message": {
-                        "type": "string",
-                        "example": "User with ID {userID} not found."
-                      },
-                      "data": {
-                        "type": "null",
-                        "example": null
-                      }
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "memo_id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "sender": {
+                      "type": "integer",
+                      "example": 456
+                    },
+                    "receiver": {
+                      "type": "integer",
+                      "example": 456
+                    },
+                    "content": {
+                      "type": "string",
+                      "example": "This is a memo content."
+                    },
+                    "choiceType": {
+                      "type": "string",
+                      "example": "A"
                     }
                   }
                 }
               }
             }
+          },
+          "403": {
+            "description": "접근 구너한 없음",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "권한이 없습니다. 다른 사용자의 메시지를 읽을 수 없습니다"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "메시지를 찾을 수 없음",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "쪽지를 찾을 수 없습니다"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "작성자 정보 찾을 수 없음 / 서버에러",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "보낸 사람의 정보를 찾을 수 없습니다"
+                }
+              }
+            }
           }
         },
-        "404": {
-          "description": "사용자 없음"
-        }
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
       }
     },
     "tags": [
@@ -452,5 +580,13 @@
         "description": "스토어 관련 엔드포인트"
       }
     ]
+  },
+  "securityDefinitions": {
+    "JWT": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT token for authentication. Format: Bearer <token>"
+    }
   }
 }

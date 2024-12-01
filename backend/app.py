@@ -27,7 +27,7 @@ from sqlalchemy import (
 from werkzeug.security import check_password_hash
 
 from db_setup import db
-from models import Quipu, User
+from models import Quipu, User, Message
 from flasgger import Swagger
 from sqlalchemy import inspect, select
 
@@ -48,70 +48,6 @@ api = Api(app, doc="/swagger")  # Flask 객체에 Api 객체 등록
 swagger = Swagger(app, template_file="./swagger.json")
 jwt = JWTManager(app)
 
-
-def create_message_table(user_id):
-    """유저별 메시지 테이블 동적 생성 함수."""
-    table_name = f"messages_user_{user_id}"
-
-    # 테이블이 이미 존재하면 그것을 return
-    if inspect(db.engine).has_table(table_name):
-        return Table(table_name, db.metadata, autoload_with=db.engine, extend_existing=True)
-    # 없으면 새로 생성
-    table = Table(
-        table_name,
-        db.metadata,
-        Column("memo_id", Integer, primary_key=True, autoincrement=True),
-        Column("content", Text, nullable=False),
-        Column("writer_id", Integer, ForeignKey("users.id"), nullable=False),
-        Column("choiceType", String(50), nullable=False),
-        Column("created_at", DateTime, default=datetime.now()),
-    )
-    try:
-        with db.engine.connect() as connection:
-            if connection.in_transaction():
-                connection.rollback()
-            connection.execution_options(isolation_level="AUTOCOMMIT")
-            db.metadata.create_all(bind=connection,tables = [table])
-    except Exception as e:
-        return ({"error" : f"테이블 생성 중 오류가 발생했습니다: {str(e)}"}),500
-    return table
-
-
-def create_message(user_id, content, writer_id, choice_type):
-    # 테이블이 이미 생성되어 있으니 해당 테이블에 메시지 삽입
-    table_name = f"messages_user_{user_id}"
-
-    # 테이블 객체를 가져온다
-    try:
-        table = Table(table_name, db.metadata, autoload_with=db.engine)
-    except Exception as e:
-        return {"error": f"테이블을 로드하는데 실패했습니다: {str(e)}"}, 500
-
-    # 동적으로 생성된 테이블에 메시지 삽입
-    try:
-        # 테이블에 데이터 삽입
-        db.session.execute(
-            table.insert().values(
-                content=content,
-                writer_id=writer_id,
-                choiceType=choice_type,
-                created_at=datetime.now()
-            )
-        )
-        db.session.commit()
-
-        return (
-                {
-                    "status": "success",
-                    "message": "메시지가 성공적으로 작성되었습니다.",
-                }
-            ,
-            201,
-        )
-    except Exception as e:
-        # 오류 발생 시 롤백
-        db.session.rollback()
-        return {"error": f"메시지 작성 중 오류가 발생했습니다: {str(e)}"}, 500
 
 
 @api.route("/register")
@@ -151,7 +87,6 @@ class Register(Resource):
             try:
                 db.session.add(new_user)
                 db.session.commit()
-                create_message_table(new_user.id)
                 return {"message": "회원가입이 완료되었습니다."}, 201
 
             except Exception as e:
@@ -192,7 +127,6 @@ class Login(Resource):
         )
 
 
-
 @api.route("/store/<int:userID>")
 class Store(Resource):
     @jwt_required()
@@ -202,14 +136,27 @@ class Store(Resource):
         loginUser = User.query.filter_by(id=current_user_id).first()
         if not user:
             return (
-                    {
-                        "status": "fail",
-                        "message": f"User with ID {userID} not found.",
-                        "data": None,
-                    }
-                ,
-                404,
+                    {"error": f"User with ID {userID} not found."}, 404
             )
+        messages = Message.query.filter_by(receiver=userID).all()
+        choiceCounts = {"A" : 0, "B" : 0, "C" : 0, "D" : 0}
+        for message in messages:
+            choice = message.choiceType
+            if choice in choiceCounts:
+                choiceCounts[choice] += 1
+            else:
+                return ({"error" : f"unknown choice"}, 404)
+        if userID == current_user_id:
+            return ({
+                "status" : "success",
+                "message" : f"my store : {userID}",
+                "data" : {
+                    "username" : user.username,
+                    "choiceType" : user.choiceType,
+                    "coin" : user.coin,
+                    "memoChoiceCount" : choiceCounts
+                }
+            },200)
         return (
                 {
                     "status": "success",
@@ -218,19 +165,13 @@ class Store(Resource):
                         "loginUser" : loginUser.username, 
                         "username": user.username,
                         "choiceType": user.choiceType,
-                        "coin" : user.coin
+                        "coin" : user.coin,
+                        "memoChoiceCount" : choiceCounts 
                     },
                 }
             ,
             200,
         )
-
-
-# @api.route("/store/<int:userID>/select")
-# class MyStoreSelect(Resource):
-# def get(self, userID):
-# return {"message": f"Select store for userID {userID}"}
-
 
 @api.route("/store/<int:userID>/write/<string:type>")
 class StoreWrite(Resource):
@@ -247,22 +188,28 @@ class StoreWrite(Resource):
             return {"error": "내용을 입력하세요."}, 400
 
         # 유저별 메시지 테이블에 데이터 삽입
+        # user : /store/<int:userID>의 주인
+        # loginUser : 로그인 한 유저
         try:
             user = db.session.get(User, userID)
+            # loginUser = db.session.get(User, current_user_id)
             if not user:
                 return {"error": "유저를 찾을 수 없습니다."}, 403
+            messages_count = Message.query.filter_by(receiver=user.id).count()
 
-            # 유저별 메세지 테이블 유무 확인
-            create_message_table(userID)
+            if messages_count>=9:
+                return {
+                    "error": "상대방의 쪽지 리스트가 꽉 찼습니다. 상대방이 쪽지를 읽어야 추가로 쪽지를 보낼 수 있습니다."
+                }, 400
 
-            # 동적으로 생성된 테이블에 메시지 추가
-            result = create_message(userID, content, current_user_id, type)
-            if result[1] != 201:
-                return result  # 오류 메시지 반환
-
-            # 새로운 메시지 ID 가져오기
-            new_message_id = result[0].get("status")
-
+            #쪽지 생성
+            new_message = Message(
+                content =content,
+                sender = current_user_id,
+                choiceType = type,
+                receiver = userID
+            )
+            db.session.add(new_message)
             db.session.commit()
         except Exception as e:
             db.session.rollback()
@@ -275,8 +222,9 @@ class StoreWrite(Resource):
             "status": "success",
             "message": f"{type} 쪽지가 성공적으로 작성되었습니다.",
             "data": {
-                "memo_id": new_message_id,
-                "writer_id": current_user_id,
+                "memo_id": new_message.memo_id,
+                "sender": current_user_id,
+                "receiver" : userID,
                 "content": content,
                 "choiceType": type,
             },
@@ -291,51 +239,40 @@ class MyStoreRead(Resource):
         current_user_id = get_jwt_identity()
         if current_user_id != userID:
             return (
-                {
-                    "status" : "fail",
-                    "message" : "로그인한 사용자만 본인의 정보를 확인할 수 있습니다.",
-                }, 403,
+                {"error" : "권한이 없습니다. 다른 사용자의 메시지를 읽을 수 없습니다."}, 403
             )
-        #테이블 이름 동적 생성
-        table_name = f"messages_user_{userID}"
-        metadata = MetaData()
+        
+        #메시지 가져오기
+        message = db.session.get(Message, postID)
+        if not message:
+            return {"error": "쪽지를 찾을 수 없습니다."}, 404
+        sender = db.session.get(User, message.sender)
+        if not sender:
+            return {"error": "보낸 사람 정보를 찾을 수 없습니다."}, 500
+        
+        # 코인 지급: 보낸 사람에게 500 코인 추가
+        sender.coins = getattr(sender, "coins", 0) + 500
 
-        try:
-            table = Table(table_name, metadata, autoload_with=db.engine)
-        except Exception as e:
-            return (
-                {"status": "error", "message": f"테이블 로드 실패: {str(e)}"},
-                500,
-            )        # 쪽지가 존재하지 않는 경우
+        # 쪽지 삭제
+        db.session.delete(message)
+        db.session.commit()
 
-        #쪽지 데이터 검색
-        try:
-            stmt = select(table).where(table.c.memo_id == postID)
-            result = db.session.execute(stmt).fetchone()
-            if not result:
-                return (
-                    {"status": "error", "message": "쪽지를 찾을 수 없습니다."},
-                    404,
-                )
 
-            # 결과 반환
-            return (
-                {
-                    "status": "success",
-                    "data": {
-                        "postID": result.memo_id,
-                        "writer": result.writer_id,  # 테이블에 따라 수정 필요
-                        "content": result.content,
-                        "choiceType": result.choiceType,  # 테이블에 따라 수정 필요
-                    },
+        # 결과 반환
+        return (
+            {
+                "status": "success",
+                "message": f"쪽지를 읽었습니다. {message.sender}님에게 500코인이 지급되었습니다.",
+                "data": {
+                    "memo_id": message.memo_id,
+                    "sender": message.sender,
+                    "receiver": message.receiver,
+                    "content": message.content,
+                    "choiceType": message.choiceType,
                 },
-                200,
-            )
-        except Exception as e:
-            return (
-                {"status": "error", "message": f"데이터 검색 중 오류: {str(e)}"},
-                500,
-            )
+            },
+            200,
+        )
 
 
 
@@ -349,12 +286,12 @@ class AllStore(Resource):
         # 사용자가 없을 경우 처리
         if not users:
             return (
-                {"status": "error", "message": "사용자가 없습니다."},
+                {"error": "사용자가 없습니다."},
                 404,
             )
         # 모델 객체를 딕셔너리로 변환
         store_list = [
-            {"userID" : user.id, "username" : user.username}
+            {"userID" : user.id, "username" : user.username, "type" : user.choiceType}
             for user in users
         ]
         return (

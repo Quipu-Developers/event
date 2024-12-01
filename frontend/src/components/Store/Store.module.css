@@ -58,6 +58,10 @@
   & div {
     width: 100%;
     border-radius: 0 0 40% 40%;
+
+    @media (max-width: 410px) {
+      border-radius: 0 0 35% 35%;
+    }
   }
 
   & div:nth-child(odd) {
@@ -82,6 +86,11 @@
   justify-content: flex-end;
   align-items: center;
   z-index: 50;
+
+  @media (max-width: 410px) {
+    border-left: 17px solid #bebebe;
+    border-right: 17px solid #bebebe;
+  }
 }
 
 .fishBreadContainer {
@@ -184,5 +193,10 @@
   width: 80%;
   height: 80%;
   border-left: 16px solid #d9d9d9;
-  border-right: 15px solid #d9d9d9;
+  border-right: 16px solid #d9d9d9;
+
+  @media (max-width: 410px) {
+    border-left: 14px solid #d9d9d9;
+    border-right: 14px solid #d9d9d9;
+  }
 }

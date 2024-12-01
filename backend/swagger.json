@@ -5,7 +5,7 @@
     "version": "1.0",
     "description": "Flask 애플리케이션의 API 문서입니다. 사용자 관리, 메시지, 스토어 관련 작업에 대한 엔드포인트를 포함합니다."
   },
-  "host": "localhost:5000",
+  "host": "localhost:5001",
   "basePath": "/",
   "schemes": ["http"],
   "consumes": ["application/json"],

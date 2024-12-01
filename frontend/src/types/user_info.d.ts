@@ -1,12 +1,14 @@
 declare global{
     interface UserInfo {
-    name: string
-    studentID: number
-    password: string
-    Bungeoppang: string
-    topic: string
+        type: string;
+        userID: number;
+        name: string;
     }
     interface ApiResponse{
+        data: {
+            UserInfo_list: UserInfo[];
+        };
+        status: string;
     }
 }
 

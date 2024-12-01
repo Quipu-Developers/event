@@ -15,7 +15,7 @@ export default function Start() {
         <button onClick={() => handlePath("/login")}>
           <img src={fishUrl1} alt="붕어" />내 붕어빵 가게 조회하기
         </button>
-        <button onClick={() => handlePath("/search")}>
+        <button onClick={() => handlePath("/login")}>
           <img src={fishUrl2} alt="붕어" />
           친구 가게 조회하기
         </button>

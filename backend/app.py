@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import timedelta
 import json
 import random
 import secrets
@@ -41,6 +41,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 db.init_app(app)
 
@@ -155,7 +156,8 @@ class Store(Resource):
                     "username" : user.username,
                     "choiceType" : user.choiceType,
                     "coin" : user.coin,
-                    "memoChoiceCount" : choiceCounts
+                    "memoChoiceCount" : choiceCounts,
+                    "topic" : user.topic
                 }
             }
             return custom_response(result, 200)
@@ -167,7 +169,8 @@ class Store(Resource):
                         "username": user.username,
                         "choiceType": user.choiceType,
                         "coin" : user.coin,
-                        "memoChoiceCount" : choiceCounts 
+                        "memoChoiceCount" : choiceCounts,
+                        "topic" : user.topic 
                     },
                 }
         return custom_response(result, 200)
@@ -242,7 +245,7 @@ class MyStoreRead(Resource):
             )
         
         #메시지 가져오기
-        message = Message.query.filter_by(choiceType = type).order_by(asc(Message.created_at)).first()
+        message = Message.query.filter_by(choiceType = type, receiver = userID).order_by(asc(Message.created_at)).first()
         if not message:
             return custom_response({"error": "쪽지를 찾을 수 없습니다."}, 404)
         sender = db.session.get(User, message.sender)

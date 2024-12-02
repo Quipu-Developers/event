@@ -12,7 +12,7 @@ export default function Start() {
         퀴여운<br></br>붕어빵 가게
       </h1>
       <div className="start-button-box">
-        <button onClick={() => handlePath("/login")}>
+        <button onClick={() => handlePath("/test")}>
           <img src={fishUrl1} alt="붕어" />내 붕어빵 가게 조회하기
         </button>
         <button onClick={() => handlePath("/login")}>

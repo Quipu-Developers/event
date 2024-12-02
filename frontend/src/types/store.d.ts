@@ -1,29 +1,10 @@
-export interface Store {
-    type: string;
-    userID: number;
-    username: string;
+declare interface StoreProps {
+  username: string;
+  memoChoiceCount: {
+    fish1: number;
+    fish2: number;
+    fish3: number;
+    fish4: number;
+  };
+  setSelectedFish: React.Dispatch<React.SetStateAction<T>>;
 }
-export interface ApiResponse{
-    data: {
-        store_list: Store[];
-    }
-    status: string;
-}
-
-
-/*
-declare global{
-    interface UserInfo {
-        type: string;
-        userID: number;
-        name: string;
-    }
-    interface ApiResponse{
-        data: {
-            UserInfo_list: UserInfo[];
-        };
-        status: string;
-    }
-}
- */
-

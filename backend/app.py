@@ -29,7 +29,7 @@ from werkzeug.security import check_password_hash
 from db_setup import db
 from models import Quipu, User, Message
 from flasgger import Swagger
-from sqlalchemy import inspect, select
+from sqlalchemy import inspect, select, asc
 
 load_dotenv()
 
@@ -132,14 +132,15 @@ class Login(Resource):
 class Store(Resource):
     @jwt_required()
     def get(self, userID):
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         user = User.query.filter_by(id=userID).first()
         loginUser = User.query.filter_by(id=current_user_id).first()
         if not user:
             return custom_response({"error": f"User with ID {userID} not found."}, 404)
 
         messages = Message.query.filter_by(receiver=userID).all()
-        choiceCounts = {"팥붕" : 0, "슈붕" : 0, "민초붕" : 0, "고구마붕" : 0}
+        #팥붕: fish1, 슈붕: fish2, 민초붕: fish3, 고구마붕: fish4
+        choiceCounts = {"fish1" : 0, "fish2" : 0, "fish3" : 0, "fish4" : 0}
         for message in messages:
             choice = message.choiceType
             if choice in choiceCounts:
@@ -176,7 +177,7 @@ class StoreWrite(Resource):
     @jwt_required()
     def post(self, userID, type):
 
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
 
         data = request.get_json()
         content = data.get("content")
@@ -229,19 +230,19 @@ class StoreWrite(Resource):
         }, 201)
 
 
-@api.route("/store/<int:userID>/read/<int:postID>")
+@api.route("/store/<int:userID>/read/<string:type>")
 class MyStoreRead(Resource):
     @jwt_required()
-    def get(self, userID, postID):
+    def get(self, userID, type):
         #현재 로그인한 사용자의 ID 가져옴
-        current_user_id = get_jwt_identity()
+        current_user_id = int(get_jwt_identity())
         if current_user_id != userID:
             return custom_response(
                 {"error" : "권한이 없습니다. 다른 사용자의 메시지를 읽을 수 없습니다."}, 403
             )
         
         #메시지 가져오기
-        message = db.session.get(Message, postID)
+        message = Message.query.filter_by(choiceType = type).order_by(asc(Message.created_at)).first()
         if not message:
             return custom_response({"error": "쪽지를 찾을 수 없습니다."}, 404)
         sender = db.session.get(User, message.sender)

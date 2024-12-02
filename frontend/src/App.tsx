@@ -8,16 +8,18 @@ import Error from "@/pages/Error";
 import Register from "@/pages/Register";
 import Test from "@/pages/Test";
 import OtherStore from "@/pages/OtherStore";
+import Main from "@/pages/Main";
 
 function App() {
   return (
     <div className="app">
       <Router basename="/event">
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Start />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/test" element={<Test />} />
-          <Route path="/start" element={<Start />} />
+          <Route path="/main" element={<Main />} />
           <Route path="/search" element={<Search />} />
           <Route path="/otherstore" element={<OtherStore />} />
           <Route path="*" element={<Error />} />

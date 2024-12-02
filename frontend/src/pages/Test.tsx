@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import "@/styles/Start.css";
 import Store from "@/components/Store/Store";
 
 export default function Start() {
@@ -25,7 +24,14 @@ export default function Start() {
   });
 
   return (
-    <div className="start-container" style={{ background: "#FFFBED" }}>
+    <div
+      style={{
+        background: "#FFFBED",
+        width: "100%",
+        height: "100%",
+        padding: "50px",
+      }}
+    >
       <Store
         username={storeData.data.username}
         memoChoiceCount={storeData.data.memoChoiceCount}

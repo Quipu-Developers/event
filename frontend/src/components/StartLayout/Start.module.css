@@ -1,0 +1,242 @@
+.startContainer {
+  background: linear-gradient(#1c175c, #8282be);
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: grid;
+  grid-template-rows: repeat(8, 1fr);
+  grid-template-columns: repeat(6, 1fr);
+  overflow: hidden;
+}
+
+.startContainer > img {
+  z-index: 100;
+  animation: float 3s ease-in-out infinite;
+  animation-delay: calc(-3s * var(--random-delay));
+  transform: rotate(var(--rotate-angle));
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(var(--rotate-angle));
+  }
+  50% {
+    transform: translateY(-5px) rotate(var(--rotate-angle));
+  }
+  100% {
+    transform: translateY(0) rotate(var(--rotate-angle));
+  }
+}
+
+/* 큰 붕어빵1 */
+.startContainer > img:nth-child(1) {
+  grid-row: 2 / 3;
+  grid-column: 2 / 3;
+  width: 130%;
+  animation: float 3s ease-in-out infinite;
+  --rotate-angle: 35deg;
+
+  @media (max-width: 450px) {
+    width: 170%;
+  }
+}
+
+/* 큰 붕어빵2 */
+.startContainer > img:nth-child(2) {
+  grid-row: 5 / 6;
+  grid-column: 5 / 6;
+  width: 130%;
+  position: relative;
+  right: 30px;
+  --rotate-angle: -20deg;
+
+  @media (max-width: 450px) {
+    width: 170%;
+  }
+}
+
+/* 작은 붕어빵1 */
+.startContainer > img:nth-child(3) {
+  grid-row: 4 / 5;
+  grid-column: 2 / 3;
+  width: 50%;
+  position: relative;
+  right: 10px;
+  bottom: 30px;
+  --rotate-angle: -20deg;
+
+  @media (max-width: 450px) {
+    width: 70%;
+  }
+}
+
+/* 작은 붕어빵2 */
+.startContainer > img:nth-child(4) {
+  grid-row: 3 / 4;
+  grid-column: 5 / 6;
+  width: 50%;
+  --rotate-angle: 20deg;
+
+  @media (max-width: 450px) {
+    width: 70%;
+  }
+}
+
+/* 눈1 */
+.startContainer > img:nth-child(5) {
+  grid-row: 2 / 3;
+  grid-column: 5 / 6;
+  width: 40%;
+  position: relative;
+  bottom: 20px;
+  right: 20px;
+  --rotate-angle: 20deg;
+
+  @media (max-width: 450px) {
+    width: 55%;
+  }
+}
+
+/* 눈2 */
+.startContainer > img:nth-child(6) {
+  grid-row: 3 / 4;
+  grid-column: 2 / 3;
+  width: 40%;
+  position: relative;
+  bottom: 20px;
+  right: 40px;
+  --rotate-angle: -25deg;
+
+  @media (max-width: 450px) {
+    width: 55%;
+  }
+}
+
+/* 눈3 */
+.startContainer > img:nth-child(7) {
+  grid-row: 3 / 4;
+  grid-column: 6 / 7;
+  width: 40%;
+  position: relative;
+  bottom: 20px;
+  --rotate-angle: 40deg;
+
+  @media (max-width: 450px) {
+    width: 55%;
+  }
+}
+
+/* 눈4 */
+.startContainer > img:nth-child(8) {
+  grid-row: 5 / 6;
+  grid-column: 2 / 3;
+  width: 40%;
+  position: relative;
+  --rotate-angle: -30deg;
+
+  @media (max-width: 450px) {
+    width: 55%;
+  }
+}
+
+/* 눈5 */
+.startContainer > img:nth-child(9) {
+  grid-row: 6 / 7;
+  grid-column: 6 / 7;
+  width: 40%;
+  position: relative;
+  bottom: 20px;
+  --rotate-angle: -20deg;
+
+  @media (max-width: 450px) {
+    width: 55%;
+  }
+}
+
+.startTitleBox {
+  position: relative;
+  grid-row: 3 / span 2;
+  grid-column: 1 / 7;
+  z-index: 100;
+
+  & h1 {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 5.2rem;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    -webkit-text-stroke: 3px #ecbe73;
+    z-index: 100;
+  }
+
+  & h2 {
+    width: 100%;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 5.2rem;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    z-index: 101;
+  }
+}
+
+.startButtonBox {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  grid-row: 6 / 9;
+  grid-column: 1 / 7;
+
+  & button {
+    position: relative;
+    color: #6d4322;
+    max-width: 291px;
+    width: 70%;
+    border-radius: 10px;
+    border: 5px solid #ecbe73;
+    font-size: 1.7rem;
+    background-color: #ffedd1;
+    margin: 2vh;
+    padding: 1.3vh 0;
+
+    & img {
+      position: absolute;
+      top: -20px;
+      left: -10px;
+      width: 45px;
+    }
+  }
+}
+
+.snowflake {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  background-color: white;
+  border-radius: 50%;
+  animation: fall linear infinite;
+  animation-delay: calc(-5s * var(--random-delay));
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateX(0) translateY(-120%);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(20px) translateY(50vh);
+  }
+  100% {
+    transform: translateX(-20px) translateY(100vh);
+    opacity: 0;
+  }
+}

@@ -14,13 +14,22 @@
 .registerTitle {
     font-size: 2.5rem;
     color: #6d4322;
-    margin-top: 1rem;
 }
 
 /* 지도 아이콘 */
 .mapSnow {
-    width: 3rem;
-    height: 3rem;
+    margin-top: 2rem;
+    width: 2.5rem;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 20rem;
 }
 
 /* 입력 필드 */
@@ -46,16 +55,10 @@
     padding-left: 1.5rem;
 }
 
-.checkButton {
-    align-self: flex-end;
-    padding: 0.5rem 1rem;
-    background: #ffdf80;
-    border: none;
-    border-radius: 0.5rem;
-    font-size: 1rem;
+.inputField::placeholder{
     color: #6d4322;
-    cursor: pointer;
 }
+
 
 /* 붕어빵 선택 */
 .sectionTitle {
@@ -63,15 +66,28 @@
     color: #6d4322;
     text-align: center;
     margin-top: 2rem;
-    width: 60%;
+    width: 100%;
     flex-wrap: wrap;
 }
 
 .fishSelection {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    width: 60%;
+    width: 100%;
+}
+
+/* 라디오 버튼 숨기기 */
+.radioInput {
+    display: none; /* 기본 라디오 버튼 숨김 */
+}
+
+/* 이미지 클릭 가능 스타일 */
+.fishImage {
+    width: 5rem;
+    cursor: pointer; /* 클릭 가능하도록 설정 */
+    border: 2px solid transparent;
+    border-radius: 10px;
+    transition: border-color 0.2s;
 }
 
 .fishItem {
@@ -79,10 +95,11 @@
     flex-direction: column;
     align-items: center;
 }
-
-img {
-    width: 60%;
+/* 선택된 상태 스타일 */
+.fishItem input:checked + .fishImage {
+    border-color: #ffdf80; /* 선택된 이미지 강조 */
 }
+
 
 .fishLabel {
     font-size: 1rem;
@@ -92,7 +109,7 @@ img {
 
 /* 쪽지 주제 설정 */
 .noteBox {
-    width: 50%;
+    width: 100%;
     display: flex;
     justify-content: center;
 }
@@ -109,7 +126,6 @@ img {
 /* 붕어빵 가게 생성 버튼 */
 .createButton {
     width: 80%;
-    max-width: 300px;
     padding: 1rem;
     background: #ffdf80;
     border: none;
@@ -118,5 +134,8 @@ img {
     font-size: 1.5rem;
     color: #6d4322;
     cursor: pointer;
-    margin-top: 2rem;
+}
+
+.noteInput::placeholder{
+    color: #6d4322;
 }

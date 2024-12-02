@@ -8,3 +8,10 @@ declare interface StoreProps {
   };
   setSelectedFish: React.Dispatch<React.SetStateAction<T>>;
 }
+
+declare interface StartProps {
+  button1: string;
+  button2: string;
+  path1: string;
+  path2: string;
+}

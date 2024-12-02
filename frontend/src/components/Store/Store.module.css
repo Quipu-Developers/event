@@ -1,7 +1,8 @@
 .storeContainer {
-  width: 80%;
+  width: 80vw;
   max-width: 400px;
-  height: 80%;
+  min-width: 280px;
+  height: 60%;
   position: relative;
 }
 

@@ -8,9 +8,14 @@
     gap: 1rem; /* 요소 간 간격 추가 */
 }
 
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 /* 로그인 제목 */
 .loginTitle {
-    font-weight: 400;
     font-size: 3rem;
     line-height: 50px;
     color: #6d4322;
@@ -25,32 +30,40 @@
     margin-top: 50px;
 }
 
+.붕어2 {
+    width: 7rem;
+}
+
 /* 입력 필드 박스 */
 .inputContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 10px; /* 필드 간 간격 */
-    width: 100%;
+    gap: 1rem;
+    width: 15rem;
+    color: #6d4322;
 }
 
 .inputBox {
-    width: 277px;
-    height: 48px;
-    top: 374px;
-    background: #ffffff;
-    border-radius: 5px;
     display: flex;
-    align-items: center;
-    padding: 0 10px; /* 내부 여백 */
-}
-
-.inputLabel {
-    font-weight: 500;
-    font-size: 1.5rem;
-    line-height: 26px;
+    flex-direction: row;
+    width: 100%;
+    gap: 0.5rem;
     color: #6d4322;
 }
+
+.inputField {
+    width: 100%;
+    height: 2.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    padding-left: 1.5rem;
+}
+
+.inputField::placeholder{
+    color: #6d4322;
+}
+
 
 /* 버튼 스타일 */
 .button {

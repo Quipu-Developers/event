@@ -253,13 +253,14 @@ class MyStoreRead(Resource):
             return custom_response({"error": "보낸 사람 정보를 찾을 수 없습니다."}, 500)
         
         # 코인 지급: 보낸 사람에게 500 코인 추가
-        sender.coins = getattr(sender, "coins", 0) + 500
+        sender.coin = getattr(sender, "coin", 0) + 500
+        db.session.add(sender)
+        db.session.flush()
 
         # 쪽지 삭제
         db.session.delete(message)
         db.session.commit()
-
-
+        
         # 결과 반환
         return custom_response(
             {

@@ -1,5 +1,12 @@
+@font-face {
+    font-family: 'DOSSaemmul';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/DOSSaemmul.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 .otherstore-container {
-    background-color: #FFDA80;
+    background-color: #FFF3D1;
     width: 100%;
     height: 100%;
     padding: 5% 0;
@@ -40,7 +47,7 @@
     }
 }
 .store-container{
-    background-color: #FFDA80;
+    background-color: #FFFBED;
     width: 100%;
     height: 70%;
     display: flex;
@@ -48,4 +55,32 @@
     justify-content: space-around;
     align-items: center;
     overflow-y: hidden;
+    position: relative;
+    padding-bottom: 5%;
+}
+.my-fish-image{
+    width: 11.3vh;
+    height: 7.3vh;
+    transform: rotate(23.28deg);;
+}
+
+.coin-box{
+    position: absolute;
+    bottom: 1%;
+    right: 2%;
+    display: flex;
+    border-radius: 11px;
+    border: 2px solid #FFCD29;
+    background-color: #FFFFFF;
+    padding: 5px;
+    font-size: 1.2rem;
+    color: #FFCD29;
+    gap: 2px;
+    box-shadow:  0 10px rgba(0, 0, 0, 0.1);
+
+    & h4{
+        color: #6D4322;
+
+        font-family: 'Dossaemmul', sans-serif;
+    }
 }

@@ -14,10 +14,10 @@ export default function Login() {
 
             <div className={styles.inputContainer}>
                 <div className={styles.inputBox}>
-                    <p className={styles.inputLabel}>학번을 입력하세요.</p>
+                  <input type="text" className={styles.inputField} placeholder={"학번을 입력하세요."}></input>
                 </div>
                 <div className={styles.inputBox}>
-                    <p className={styles.inputLabel}>비밀번호를 입력하세요.</p>
+                  <input type="text" className={styles.inputField} placeholder={"비밀번호를 입력하세요."}></input>
                 </div>
             </div>
 

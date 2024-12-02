@@ -2,7 +2,7 @@ from datetime import timedelta
 import json
 import random
 import secrets
-
+from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 from flask import Flask, request, jsonify, Response
@@ -34,6 +34,8 @@ from sqlalchemy import inspect, select, asc
 load_dotenv()
 
 app = Flask(__name__)
+
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 app.config["JSON_AS_ASCII"] = False
 app.config["JSON_SORT_KEYS"] = False

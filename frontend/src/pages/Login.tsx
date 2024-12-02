@@ -12,14 +12,14 @@ export default function Login() {
       <h1 className={styles.loginTitle}>로그인</h1>
       <img src={붕어} alt="붕어 이미지" className={styles.붕어2} />
 
-      <div className={styles.inputContainer}>
-        <div className={styles.inputBox}>
-          <p className={styles.inputLabel}>학번을 입력하세요.</p>
-        </div>
-        <div className={styles.inputBox}>
-          <p className={styles.inputLabel}>비밀번호를 입력하세요.</p>
-        </div>
-      </div>
+            <div className={styles.inputContainer}>
+                <div className={styles.inputBox}>
+                  <input type="text" className={styles.inputField} placeholder={"학번을 입력하세요."}></input>
+                </div>
+                <div className={styles.inputBox}>
+                  <input type="text" className={styles.inputField} placeholder={"비밀번호를 입력하세요."}></input>
+                </div>
+            </div>
 
       <button
         className={`${styles.button} ${styles.loginButton}`}

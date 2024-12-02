@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/event/static/css/main.ac8f5967.css",
-    "main.js": "/event/static/js/main.a8d39315.js",
+    "main.js": "/event/static/js/main.3f02644b.js",
     "static/js/453.8ab44547.chunk.js": "/event/static/js/453.8ab44547.chunk.js",
-    "static/media/팥붕.png": "/event/static/media/팥붕.b39c710eed860e55099b.png",
-    "static/media/민초붕.png": "/event/static/media/민초붕.5b39756e795824836f9a.png",
-    "static/media/슈붕.png": "/event/static/media/슈붕.93620211b09bd11d4d6c.png",
-    "static/media/고구마붕.png": "/event/static/media/고구마붕.95343b0ba527d4521bcd.png",
-    "static/media/붕어.png": "/event/static/media/붕어.2ea5b49ebcf920da1a03.png",
+    "static/media/민초붕.png": "/event/static/media/민초붕.1f0c725752c23cb9c25f.png",
+    "static/media/팥붕.png": "/event/static/media/팥붕.d35dbfa94bdba58cfc64.png",
+    "static/media/붕어.png": "/event/static/media/붕어.1191f99a1d37a1d9c9af.png",
+    "static/media/고구마붕.png": "/event/static/media/고구마붕.2ea446617ca16a723fc0.png",
+    "static/media/슈붕.png": "/event/static/media/슈붕.685f4914f8c90b5a5854.png",
     "index.html": "/event/index.html",
     "main.ac8f5967.css.map": "/event/static/css/main.ac8f5967.css.map",
-    "main.a8d39315.js.map": "/event/static/js/main.a8d39315.js.map",
+    "main.3f02644b.js.map": "/event/static/js/main.3f02644b.js.map",
     "453.8ab44547.chunk.js.map": "/event/static/js/453.8ab44547.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.ac8f5967.css",
-    "static/js/main.a8d39315.js"
+    "static/js/main.3f02644b.js"
   ]
 }

@@ -7,3 +7,5 @@ Werkzeug
 SQLAlchemy
 pymysql
 flasgger
+cryptography
+flask-cors

@@ -5,102 +5,66 @@
     "version": "1.0",
     "description": "Flask 애플리케이션의 API 문서입니다. 사용자 관리, 메시지, 스토어 관련 작업에 대한 엔드포인트를 포함합니다."
   },
-  "host": "localhost:5000",
+  "host": "localhost:5001",
   "basePath": "/",
-  "schemes": ["http"],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
-    "/allStore": {
-      "get": {
-        "summary": "모든 스토어 조회",
-        "description": "모든 사용자 목록과 무작위로 선택된 사용자의 정보를 가져옵니다.",
-        "tags": ["스토어"],
-        "responses": {
-          "200": {
-            "description": "모든 사용자와 무작위 사용자 정보.",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "store_list": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "userid": { "type": "integer" },
-                      "username": { "type": "string" }
-                    }
-                  }
-                },
-                "random_user": {
-                  "type": "object",
-                  "properties": {
-                    "userid": { "type": "integer" },
-                    "username": { "type": "string" }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/register": {
       "post": {
         "summary": "사용자 등록",
         "description": "이름, 학번, 비밀번호 등의 정보를 입력하여 사용자를 등록합니다.",
-        "tags": ["사용자"],
+        "tags": [
+          "사용자"
+        ],
         "parameters": [
           {
-            "name": "body",
             "in": "body",
+            "name": "body",
             "required": true,
             "schema": {
               "type": "object",
               "properties": {
-                "name": { "type": "string", "example": "홍길동" },
-                "studentID": { "type": "string", "example": "20241234" },
-                "password": { "type": "string", "example": "password123" },
-                "choiceType": { "type": "string", "example": "A" },
-                "topic": { "type": "string", "example": "Sports" }
+                "name": {
+                  "type": "string",
+                  "example": "이예나"
+                },
+                "studentID": {
+                  "type": "string",
+                  "example": "1111111111"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "1111"
+                },
+                "choiceType": {
+                  "type": "string",
+                  "example": "fish2"
+                },
+                "topic": {
+                  "type": "string",
+                  "example": "토픽1 어쩌고 저쩌고"
+                }
               }
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "사용자 등록 성공."
+            "description": "사용자 등록 성공"
           },
           "400": {
-            "description": "잘못된 입력 또는 이미 존재하는 사용자."
-          }
-        }
-      }
-    },
-    "/register/quipuCheck": {
-      "post": {
-        "summary": "quipu에서 학번 확인",
-        "description": "quipu_students 테이블에서 학번이 존재하는지 확인합니다.",
-        "tags": ["사용자"],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "studentID": { "type": "string", "example": "20241234" }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "학번이 존재합니다."
+            "description": "잘못된 입력 또는 이미 존재하는 사용자"
           },
-          "404": {
-            "description": "학번이 존재하지 않습니다."
+          "500": {
+            "description": "회원 가입 오류"
           }
         }
       }
@@ -109,69 +73,166 @@
       "post": {
         "summary": "사용자 로그인",
         "description": "학번과 비밀번호를 입력하여 사용자가 로그인할 수 있습니다.",
-        "tags": ["사용자"],
+        "tags": [
+          "사용자"
+        ],
         "parameters": [
           {
-            "name": "body",
             "in": "body",
+            "name": "body",
             "required": true,
             "schema": {
               "type": "object",
               "properties": {
-                "studentID": { "type": "string", "example": "20241234" },
-                "password": { "type": "string", "example": "password123" }
+                "studentID": {
+                  "type": "string",
+                  "example": "1111111111"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "1111"
+                }
               }
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "로그인 성공.",
+            "description": "로그인 성공",
             "schema": {
               "type": "object",
               "properties": {
-                "status": { "type": "string", "example": "success" },
-                "message": { "type": "string", "example": "로그인 성공" },
-                "name": { "type": "string", "example": "홍길동" },
-                "choiceType": { "type": "string", "example": "A" },
-                "token": { "type": "string", "example": "jwt_token_example" }
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "로그인 성공"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "이예나"
+                },
+                "choiceType": {
+                  "type": "string",
+                  "example": "fish2"
+                },
+                "token": {
+                  "type": "string",
+                  "example": "jwt_token_example"
+                }
               }
             }
           },
           "400": {
-            "description": "잘못된 학번 또는 비밀번호."
+            "description": "잘못된 학번 또는 비밀번호",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "비밀번호가 일치하지 않습니다"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/myStore/{userID}": {
+    "/store/{userID}": {
       "get": {
         "summary": "사용자 스토어 조회",
         "description": "특정 사용자의 스토어 정보를 조회합니다.",
-        "tags": ["스토어"],
+        "tags": [
+          "스토어"
+        ],
         "parameters": [
           {
             "name": "userID",
             "in": "path",
             "required": true,
             "type": "integer",
-            "description": "사용자의 ID.",
-            "example": 123
+            "example": 1
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string",
+            "description": "JWT 토큰 (형식: Bearer <token>)"
           }
         ],
         "responses": {
           "200": {
-            "description": "사용자 스토어 정보.",
+            "description": "스토어 조회 성공",
             "schema": {
               "type": "object",
               "properties": {
-                "username": { "type": "string", "example": "홍길동" },
-                "choiceType": { "type": "string", "example": "A" }
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Store for userID 1"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "example": "이예나"
+                    },
+                    "choiceType": {
+                      "type": "string",
+                      "example": "fish2"
+                    },
+                    "coin": {
+                      "type": "integer",
+                      "example": 1500
+                    },
+                    "memoChoiceCount": {
+                      "type": "object",
+                      "properties": {
+                        "fish1": {
+                          "type": "integer",
+                          "example": 3
+                        },
+                        "fish2": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "fish3": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "fish4": {
+                          "type": "integer",
+                          "example": 0
+                        }
+                      }
+                    },
+                    "topic": {
+                      "type": "string",
+                      "example": "토픽1 어쩌고 저쩌고"
+                    }
+                  }
+                }
               }
             }
           },
           "404": {
-            "description": "사용자를 찾을 수 없습니다."
+            "description": "사용자 없음",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "User with ID 1 not found"
+                }
+              }
+            }
           }
         }
       }
@@ -179,35 +240,42 @@
     "/store/{userID}/write/{type}": {
       "post": {
         "summary": "스토어에 메시지 작성",
-        "description": "사용자가 자신의 스토어에 메시지를 작성합니다.",
-        "tags": ["스토어"],
+        "description": "다른 사용자의 스토어에 메시지를 작성합니다.",
+        "tags": [
+          "스토어"
+        ],
         "parameters": [
           {
             "name": "userID",
             "in": "path",
             "required": true,
             "type": "integer",
-            "description": "사용자의 ID.",
-            "example": 123
+            "example": 2
           },
           {
             "name": "type",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "메시지 유형.",
-            "example": "public"
+            "example": "fish1"
           },
           {
-            "name": "body",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string",
+            "description": "JWT 토큰 (형식: Bearer <token>)"
+          },
+          {
             "in": "body",
+            "name": "body",
             "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "content": {
                   "type": "string",
-                  "example": "안녕하세요. 메시지입니다."
+                  "example": "안녕하세요! 좋은 하루 되세요."
                 }
               }
             }
@@ -215,20 +283,160 @@
         ],
         "responses": {
           "201": {
-            "description": "메시지 작성 성공.",
+            "description": "메시지 작성 성공"
+          },
+          "400": {
+            "description": "본인의 가게에 메시지를 작성할 수 없음"
+          },
+          "404": {
+            "description": "사용자 없음"
+          },
+          "500": {
+            "description": "서버 오류"
+          }
+        }
+      }
+    },
+    "/store/{userID}/read/{type}": {
+      "get": {
+        "summary": "쪽지 읽기",
+        "description": "선택한 붕어빵 종류에 해당하는 쪽지중 오래된 쪽지 열람, 보낸 사람에게 500코인 지급",
+        "tags": [
+          "스토어"
+        ],
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "유저 아이디"
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "붕어빵 종류"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string",
+            "description": "JWT 토큰 (형식: Bearer <token>)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공적으로 메시지 읽음, 보낸 사람에게 500코인 지급",
             "schema": {
               "type": "object",
               "properties": {
-                "status": { "type": "string", "example": "success" },
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
                 "message": {
                   "type": "string",
-                  "example": "쪽지가 성공적으로 작성되었습니다."
+                  "example": "쪽지를 읽었습니다. {sender}님에게 500코인이 지급되었습니다."
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "memo_id": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "sender": {
+                      "type": "integer",
+                      "example": 123
+                    },
+                    "receiver": {
+                      "type": "integer",
+                      "example": 456
+                    },
+                    "content": {
+                      "type": "string",
+                      "example": "쪽지 내용"
+                    },
+                    "choiceType": {
+                      "type": "string",
+                      "example": "fish1"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "권한이 없습니다. 다른 사용자의 메시지를 읽을 수 없습니다."
+          },
+          "404": {
+            "description": "쪽지를 찾을 수 없습니다."
+          },
+          "500": {
+            "description": "보낸 사람 정보를 찾을 수 없습니다."
+          }
+        }
+      }
+    },
+    "/all-store": {
+      "get": {
+        "summary": "모든 스토어 조회",
+        "description": "모든 사용자 목록과 정보를 가져옵니다.",
+        "tags": [
+          "스토어"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string",
+            "description": "JWT 토큰 (형식: Bearer <token>)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "모든 사용자 목록 조회 성공",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "success"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "store_list": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "userID": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "username": {
+                            "type": "string",
+                            "example": "이예나"
+                          },
+                          "type": {
+                            "type": "string",
+                            "example": "fish2"
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "사용자를 찾을 수 없습니다."
+            "description": "사용자 없음"
           }
         }
       }
@@ -243,5 +451,13 @@
       "name": "스토어",
       "description": "스토어 관련 엔드포인트"
     }
-  ]
+  ],
+  "securityDefinitions": {
+    "JWT": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT 토큰 (형식: Bearer <token>)"
+    }
+  }
 }

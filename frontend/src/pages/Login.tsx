@@ -21,7 +21,10 @@ export default function Login() {
         </div>
       </div>
 
-      <button className={`${styles.button} ${styles.loginButton}`}>
+      <button
+        className={`${styles.button} ${styles.loginButton}`}
+        onClick={() => navigate("/start")}
+      >
         로그인
       </button>
       <button

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import styles from "@/styles/Start.module.css";
 import Store from "@/components/Store/Store";
 
 export default function Start() {

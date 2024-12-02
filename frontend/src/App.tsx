@@ -7,6 +7,7 @@ import Search from "@/pages/Search";
 import Error from "@/pages/Error";
 import Register from "@/pages/Register";
 import Test from "@/pages/Test";
+import OtherStore from "@/pages/OtherStore";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/test" element={<Test />} />
           <Route path="/start" element={<Start />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/otherstore" element={<OtherStore />} />
           <Route path="*" element={<Error />} />
         </Routes>
       </Router>

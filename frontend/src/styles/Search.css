@@ -8,6 +8,17 @@
     justify-content: space-around;
     align-items: center;
     overflow-y: hidden;
+    position: relative;
+}
+
+.back{
+    position: absolute;
+    font-size: 4rem;
+    top: 1%;
+    left: 2%;
+    & svg{
+        color: #6D4322;
+    }
 }
 
 .search-top {
@@ -23,7 +34,6 @@
         text-align: center;
         color: #6D4322;
     }
-
     & svg{
         color: white;
         font-size: 3rem;

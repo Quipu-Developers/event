@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { TbSnowflake } from "react-icons/tb";
 import { TbReload } from "react-icons/tb";
 import { FaSearch } from "react-icons/fa";
+import { IoIosArrowRoundBack } from "react-icons/io";
 import {getStores} from "@/services/get_store"
+
 
 //GET /all-store
 
@@ -15,13 +17,19 @@ export default function Search() {
     /* const [clicked, setClicked] = useState(false); */
     const [maxUserID, setMaxUserID] = useState<number | null>(null);
     const [randomNumbers, setRandomNumbers] = useState<number[]>([]);
-    const [storeNames, setStoreNames] = useState<string[]>([]);
+    /*const [storeNames, setStoreNames] = useState<string[]>([]);*/
+    const [storeNames, setStoreNames] = useState<string[]>([
+        "제민님의 붕어빵 가게",
+        "예나님의 붕어빵 가게",
+        "재원님의 붕어빵 가게",
+        "윤하님의 붕어빵 가게",
+    ]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalList, setModalList] = useState<string[]>([
-        "붕어님의 붕어빵 가게",
-        "붕어님의 붕어빵 가게",
-        "붕어님의 붕어빵 가게",
-        "붕어님의 붕어빵 가게",
+        "제민님의 붕어빵 가게",
+        "예나님의 붕어빵 가게",
+        "재원님의 붕어빵 가게",
+        "윤하님의 붕어빵 가게",
         "붕어님의 붕어빵 가게",
         "붕어님의 붕어빵 가게",
         "붕어님의 붕어빵 가게",
@@ -105,8 +113,11 @@ export default function Search() {
 
     return (
         <div className="search-container">
+            <div className="back">
+                <IoIosArrowRoundBack />
+            </div>
             <div className="search-top">
-                <TbSnowflake className="snow" />
+                <TbSnowflake/>
                 <h1>친구 가게 조회하기</h1>
             </div>
             <div className="button-setup">
@@ -116,16 +127,13 @@ export default function Search() {
                     <TbReload/>
 
                 </div>
-                <button> 붕어님의 붕어빵 가게 </button>
-                <button> 붕어님의 붕어빵 가게 </button>
-                <button> 붕어님의 붕어빵 가게 </button>
-                <button> 붕어님의 붕어빵 가게 </button>
-
-                {/*
                 <button> {storeNames[0]}</button>
                 <button> {storeNames[1]}</button>
                 <button> {storeNames[2]}</button>
                 <button> {storeNames[3]}</button>
+
+                {/*
+
                 */}
             </div>
             <div className="search-all-store">

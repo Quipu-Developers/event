@@ -54,12 +54,6 @@ export default function Register() {
             });
 
             if (response.ok) {
-                const data = await response.json();
-                const { token } = data;
-
-                // JWT Token 저장
-                localStorage.setItem("token", token);
-
                 setSuccessMessage("붕어빵 가게 생성이 완료되었습니다!");
                 setErrorMessage(null);
 

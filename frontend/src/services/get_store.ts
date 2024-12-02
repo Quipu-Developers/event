@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ApiResponse } from "@/types/user_info";
 
 const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 const FRONTEND_URL = process.env.REACT_APP_FRONTEND_URL;
@@ -11,6 +10,11 @@ export const getStores = async (
 ) => {
     try {
         const token = localStorage.getItem("jwtToken");
+        if (!token) {
+            setError("토큰이 없습니다.");
+            setLoading(false);
+            return;
+        }
 
         const response = await axios.get<ApiResponse>(`${BASE_URL}/all-store`, {
             headers: {

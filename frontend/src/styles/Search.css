@@ -38,17 +38,18 @@
     gap: 10px;
     font-size: 2.3rem;
     color: #6D4322;
+    cursor: pointer;
 
-    & svg{
+    & svg {
         color: #6D4322;
-        cursor: pointer;
-        transition: all 0.3s ease;
 
-        &:hover{
-            animation: rotateAnimation 2s forward;
-        }
+        transition: all 0.3s ease;
+    }
+    &:hover svg{
+            animation: rotateAnimation 2s normal;
     }
 }
+
 @keyframes rotateAnimation {
     0% {
         transform: rotate(0deg);
@@ -73,46 +74,114 @@
         background-color: #FFFBED;
         font-size: 2.3rem;
         margin: 1.5vh;
-    }
-
-}
-
-.input-container{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    & input {
-        width: 70%;
-        height: 7vh;
-        padding: 0 8px;
-        font-size: 2rem;
-        color: #6D4322;
-        border: 5px solid white;
-
-        &::placeholder {
-            color: #6D4322;
-            font-size: 2rem;
-            opacity: 0.8;
-        }
-    }
-
-    & svg {
-        cursor: pointer;
-        height: 7vh;
-        width: 7vh;
-        padding: 2vh;
-        color: #6D4322;
-        background-color: #FFF1BB;
-        transition: all 0.3s ease;
-
         &:hover {
             color: #FFF1BB;
             background-color: #6D4322;
         }
     }
 }
+
+.search-all-store{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & button {
+        color: #6d4322;
+        width: 40%;
+        height: 7vh;
+        border-radius: 10px;
+        border: 5px solid #FFF1BB;
+        background-color: #FFFBED;
+        font-size: 2rem;
+        margin: 1.5vh;
+        &:hover {
+            color: #FFF1BB;
+            background-color: #6D4322;
+        }
+    }
+
+    & svg {
+        font-size: 1.3rem;
+    }
+}
+
+
+/* 모달 배경 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* 모달 컨테이너 */
+.modal-container {
+    background: white;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* 리스트 스타일 */
+.modal-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    max-height: 200px; /* 리스트 최대 높이 설정 */
+    overflow-y: auto
+}
+
+.modal-container li {
+    margin: 10px 0;
+    padding: 10px;
+    background: #f4f4f4;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* 닫기 버튼 */
+.modal-container button {
+    background: #ff5c5c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+.modal-container button:hover {
+    background: #ff3333;
+}
+
+/* 커스텀 스크롤바 스타일 (Chrome, Edge) */
+.modal-container ul::-webkit-scrollbar {
+    width: 8px; /* 스크롤바 너비 */
+}
+
+.modal-container ul::-webkit-scrollbar-thumb {
+    background-color: #888; /* 스크롤바 색상 */
+    border-radius: 4px; /* 스크롤바 모서리 */
+}
+
+.modal-container ul::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* 스크롤바 호버 색상 */
+}
+
+
+
 
 @media (max-height: 480px) {
     .search-container {

@@ -38,7 +38,7 @@
                 },
                 "choiceType": {
                   "type": "string",
-                  "example": "fish1"
+                  "example": "fish2"
                 },
                 "topic": {
                   "type": "string",

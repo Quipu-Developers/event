@@ -3,13 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { TbSnowflake } from "react-icons/tb";
 import { TbReload } from "react-icons/tb";
 import { FaSearch } from "react-icons/fa";
-import {Store, ApiResponse} from "@/types/store";
 import {getStores} from "@/services/get_store"
 
 //GET /all-store
 
 export default function Search() {
-    const [stores, setStores] = useState<Store[]>([]);  // 가게 목록 저장 상태
+    const [stores, setStores] = useState<UserInfo[]>([]);  // 가게 목록 저장 상태
     const [loading, setLoading] = useState<boolean>(true); // 로딩 상태
     const [error, setError] = useState<string | null>(null);    // 에러 상태
     const [clicked, setClicked] = useState(false);
@@ -55,7 +54,7 @@ export default function Search() {
 
 
     const getUserNameByID = (userID: number) => {
-        const store: Store | undefined = stores.find((store) => store.userID === userID);
+        const store: UserInfo | undefined = stores.find((store) => store.userID === userID);
         if (store) {
             return `${store.username.slice(-2)}님의 붕어빵 가게`
         }

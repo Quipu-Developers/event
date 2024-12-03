@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import styles from "@/styles/Login.module.css"; // CSS 모듈 가져오기
-import { useNavigate } from "react-router-dom"; // useNavigate 임포트
+import styles from "@/styles/Login.module.css";
+import { useNavigate } from "react-router-dom";
 import 눈결정 from "@/assets/map_snow.png";
 import 붕어 from "@/assets/붕어.png";
+import { loginUser, LoginUserData } from "@/services/request_login";
 
 export default function Login() {
-    const navigate = useNavigate(); // 페이지 이동 훅
-    const [formData, setFormData] = useState({
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState<LoginUserData>({
         studentID: "",
         password: "",
     });
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    // 입력 핸들러
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -21,39 +21,20 @@ export default function Login() {
         }));
     };
 
-    // 폼 제출 핸들러
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:5001/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    studentID: formData.studentID,
-                    password: formData.password,
-                }),
-            });
+            const data = await loginUser(formData);
+            const { token } = data;
 
-            if (response.ok) {
-                const data = await response.json();
-                const { token } = data;
+            // JWT 토큰 저장
+            localStorage.setItem("token", token);
 
-                // JWT 토큰 저장
-                localStorage.setItem("token", token);
-
-                // 페이지 이동
-                navigate("/start");
-            } else if (response.status === 400) {
-                const errorData = await response.json();
-                setErrorMessage(errorData.error || "학번 또는 비밀번호가 잘못되었습니다.");
-            } else {
-                setErrorMessage("로그인에 실패했습니다. 다시 시도해주세요.");
-            }
-        } catch (error) {
-            setErrorMessage("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+            // 페이지 이동
+            navigate("/main");
+        } catch (error: any) {
+            setErrorMessage(error.message);
         }
     };
 

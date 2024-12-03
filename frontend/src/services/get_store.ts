@@ -1,7 +1,6 @@
 import axios from "axios";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-//const BASE_URL = process.env.REACT_APP_BACKEND_URL;
-//const FRONTEND_URL = process.env.REACT_APP_FRONTEND_URL;
 
 export const getStores = async (
     setStores: React.Dispatch<React.SetStateAction<any[]>>,
@@ -16,14 +15,14 @@ export const getStores = async (
             return;
         }
 
-        const response = await axios.get<ApiResponse>(`http://localhost:5001/all-store`, {
+        const response = await axios.get<ApiResponse>(`${BACKEND_URL}/all-store`, {
             headers: {
                 Accept: "application/json",
                 Authorization: token ? `Bearer ${token}` : "",
             },
         });
 
-        if (response.data.status == 'success') {
+        if (response.data.status === 'success') {
             setStores(response.data.data.store_list);
         } else {
             setError('데이터를 불러오는데 실패했습니다.');

@@ -18,6 +18,7 @@
     left: 2%;
     & svg{
         color: #6D4322;
+        cursor: pointer;
     }
 }
 
@@ -134,13 +135,27 @@
 
 /* 모달 컨테이너 */
 .modal-container {
+    display: flex; /* Flexbox 사용 */
+    flex-direction: column; /* 세로 방향 정렬 */
+    align-items: center; /* 가로 중앙 정렬 */
+    justify-content: space-around;
     background: white;
-    width: 90%;
+    width: 85%;
     max-width: 500px;
-    padding: 20px;
+    padding: 10px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
+    color: #6D4322;
+}
+
+.modal-container svg {
+    font-size: 2rem;
+    margin-bottom: 20px
+}
+
+.modal-container h2 {
+    font-size: 2rem;
 }
 
 /* 리스트 스타일 */
@@ -148,37 +163,42 @@
     list-style: none;
     padding: 0;
     margin: 20px 0;
-    max-height: 200px; /* 리스트 최대 높이 설정 */
-    overflow-y: auto
+    max-height: 400px; /* 리스트 최대 높이 설정 */
+    overflow-y: auto;
+    width: 90%; /* 리스트가 컨테이너 너비를 채움 */
 }
 
 .modal-container li {
+    display: flex;
+    flex-direction: column; /* 세로 방향 정렬 */
+    align-items: center; /* 가로 중앙 정렬 */
     margin: 10px 0;
     padding: 10px;
-    background: #f4f4f4;
-    border-radius: 4px;
-    font-size: 16px;
+    background: #FFFBED;
+    border-radius: 8px;
+    font-size: 1.5rem;
 }
 
 /* 닫기 버튼 */
 .modal-container button {
-    background: #ff5c5c;
+    background: #FF6E3E;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
+    border-radius: 10px;
+    padding: 0.2rem 0.2rem;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1.2rem;
     transition: background 0.3s ease;
+    align-self: center; /* 버튼을 가로 중앙 정렬 */
 }
 
 .modal-container button:hover {
-    background: #ff3333;
+    background: #FF6E3E;
 }
 
 /* 커스텀 스크롤바 스타일 (Chrome, Edge) */
 .modal-container ul::-webkit-scrollbar {
-    width: 8px; /* 스크롤바 너비 */
+    width: 4px; /* 스크롤바 너비 */
 }
 
 .modal-container ul::-webkit-scrollbar-thumb {

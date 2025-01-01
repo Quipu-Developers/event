@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import styles from "@/styles/Register.module.css"; // CSS 모듈 가져오기
+import styles from "@/styles/Register.module.css";
 import mapSnow from "@/assets/map_snow.png";
 import 팥붕 from "@/assets/팥붕.png";
 import 슈붕 from "@/assets/슈붕.png";
 import 민초붕 from "@/assets/민초붕.png";
 import 고구마붕 from "@/assets/고구마붕.png";
+import { registerUser } from "@/services/request_register";
 
 export default function Register() {
-    // 상태 관리
     const [formData, setFormData] = useState({
         name: "",
         studentID: "",
@@ -19,7 +19,6 @@ export default function Register() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    // 입력 변경 핸들러
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -28,7 +27,6 @@ export default function Register() {
         }));
     };
 
-    // 폼 제출 핸들러
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -39,41 +37,29 @@ export default function Register() {
         }
 
         try {
-            const response = await fetch("http://localhost:5001/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    name: formData.name,
-                    studentID: formData.studentID,
-                    password: formData.password,
-                    choiceType: formData.choiceType,
-                    topic: formData.topic,
-                }),
+            // API 호출
+            await registerUser({
+                name: formData.name,
+                studentID: formData.studentID,
+                password: formData.password,
+                choiceType: formData.choiceType,
+                topic: formData.topic,
             });
 
-            if (response.ok) {
-                setSuccessMessage("붕어빵 가게 생성이 완료되었습니다!");
-                setErrorMessage(null);
+            setSuccessMessage("붕어빵 가게 생성이 완료되었습니다!");
+            setErrorMessage(null);
 
-                // 폼 초기화
-                setFormData({
-                    name: "",
-                    studentID: "",
-                    password: "",
-                    confirmPassword: "",
-                    choiceType: "fish1",
-                    topic: "",
-                });
-            } else if (response.status === 400) {
-                const errorData = await response.json();
-                setErrorMessage(errorData.message || "잘못된 입력입니다.");
-            } else {
-                setErrorMessage("서버 오류가 발생했습니다. 다시 시도해주세요.");
-            }
-        } catch (error) {
-            setErrorMessage("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+            // 폼 초기화
+            setFormData({
+                name: "",
+                studentID: "",
+                password: "",
+                confirmPassword: "",
+                choiceType: "fish1",
+                topic: "",
+            });
+        } catch (error: any) {
+            setErrorMessage(error.message);
         }
     };
 
@@ -142,9 +128,9 @@ export default function Register() {
                             value="fish1"
                             checked={formData.choiceType === "fish1"}
                             onChange={handleChange}
-                            className={styles.radioInput} // 숨기기 위해 스타일 클래스 추가
+                            className={styles.radioInput}
                         />
-                        <img src={팥붕} alt="팥붕" className={styles.fishImage}/>
+                        <img src={팥붕} alt="팥붕" className={styles.fishImage} />
                         <p className={styles.fishLabel}>팥붕</p>
                     </label>
                     <label className={styles.fishItem}>
@@ -156,7 +142,7 @@ export default function Register() {
                             onChange={handleChange}
                             className={styles.radioInput}
                         />
-                        <img src={슈붕} alt="슈붕" className={styles.fishImage}/>
+                        <img src={슈붕} alt="슈붕" className={styles.fishImage} />
                         <p className={styles.fishLabel}>슈붕</p>
                     </label>
                     <label className={styles.fishItem}>

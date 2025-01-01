@@ -80,9 +80,7 @@ export default function Start() {
                 </div>
 
             </div>
-            <div className="otherstore-button">
-                <button>붕어빵 만들어주기</button>
-            </div>
+            <button className="otherstore-button">붕어빵 만들어주기</button>
 
         </div>
     );

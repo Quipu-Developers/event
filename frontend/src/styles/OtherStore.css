@@ -58,6 +58,7 @@
     overflow-y: hidden;
     position: relative;
     padding-bottom: 8%;
+    margin-bottom: 10%;
 }
 .my-fish-image{
     width: 11.3vh;
@@ -67,14 +68,14 @@
 
 .coin-box{
     position: absolute;
-    bottom: 2.4%;
+    bottom: 4%;
     right: 2%;
     display: flex;
     border-radius: 10px;
     border: 2px solid #FFCD29;
     background-color: #FFFFFF;
     padding: 5px;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     color: #FFCD29;
     gap: 2px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -86,7 +87,27 @@
     }
 }
 
+.otherstore-button{
+    position: absolute;
+    bottom: 3.5%;
+    color: #6D4322;
+    width: 65%;
+    height: 8vh;
+    border-radius: 11px;
+    border: 4px solid #A67651;
+    background-color: #FFFFFF;
+    font-size: 2.5rem;
+    padding: 4px;
+    &:hover {
+        color: #FFF1BB;
+        background-color: #6D4322;
+    }
+}
 
+
+
+
+/*
 .otherstore-button{
     width: 100%;
     display: flex;
@@ -107,4 +128,6 @@
         }
     }
 }
+
+ */
 

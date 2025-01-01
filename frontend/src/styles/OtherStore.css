@@ -34,15 +34,16 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 50px;
+    gap: 40px;
 
     & h1{
-        font-size: 3.5rem;
+        font-size: 2.5rem;
         text-align: center;
         color: #6D4322;
     }
     & svg{
-        color: black;
+        transform: translateY(8px);
+        color: #6D4322;
         font-size: 3rem;
     }
 }
@@ -56,7 +57,7 @@
     align-items: center;
     overflow-y: hidden;
     position: relative;
-    padding-bottom: 5%;
+    padding-bottom: 8%;
 }
 .my-fish-image{
     width: 11.3vh;
@@ -66,17 +67,17 @@
 
 .coin-box{
     position: absolute;
-    bottom: 1%;
+    bottom: 2.4%;
     right: 2%;
     display: flex;
-    border-radius: 11px;
+    border-radius: 10px;
     border: 2px solid #FFCD29;
     background-color: #FFFFFF;
     padding: 5px;
     font-size: 1.2rem;
     color: #FFCD29;
     gap: 2px;
-    box-shadow:  0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
     & h4{
         color: #6D4322;
@@ -84,3 +85,26 @@
         font-family: 'Dossaemmul', sans-serif;
     }
 }
+
+
+.otherstore-button{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    & button {
+        color: #6D4322;
+        width: 70%;
+        height: 9vh;
+        border-radius: 10px;
+        border: 3px solid #A67651;
+        background-color: #FFFBED;
+        font-size: 2.5rem;
+        padding: 5px;
+        &:hover {
+            color: #FFF1BB;
+            background-color: #6D4322;
+        }
+    }
+}
+
